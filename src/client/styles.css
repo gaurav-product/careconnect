@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-sand-50 text-ink antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04';
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-leaf-500 ring-offset-2 ring-offset-sand-50 rounded-md;
+  }
+  ::selection {
+    @apply bg-leaf-100;
+  }
+}
+
+@layer components {
+  .cc-card {
+    @apply rounded-2xl border border-sand-200 bg-white shadow-card;
+  }
+  .cc-label {
+    @apply block text-sm font-medium text-ink-muted mb-1.5;
+  }
+  .cc-input {
+    @apply w-full rounded-xl border border-sand-200 bg-white px-3.5 py-3 text-base text-ink
+           placeholder:text-ink-soft/70 focus:border-leaf-500 focus:ring-1 focus:ring-leaf-500;
+  }
+  .cc-input-error {
+    @apply border-alert-500 focus:border-alert-500 focus:ring-alert-500;
+  }
+  .cc-hint {
+    @apply mt-1.5 text-sm text-ink-soft;
+  }
+  .cc-error {
+    @apply mt-1.5 text-sm text-alert-600;
+  }
+  .cc-chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
