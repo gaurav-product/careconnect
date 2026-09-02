@@ -56,8 +56,19 @@ Counting what an Indian family in a metro can reach within 48 hours of a dischar
 | Subscription eldercare (Samarth, Emoha, Anvayaa) | 40–350+ cities (S10) | Monthly fee on top |
 
 **FACT** Care24 alone claims 2,000+ caregivers across ten cities with a three-hour
-allocation promise (S14). **OBSERVATION** Across every source read, no family describes
-being unable to *find* an attendant. They describe what happens *after* they find one.
+allocation promise (S14) — a company's own marketing, so treat the capacity as a claim and
+the intent as real.
+
+**OBSERVATION, with an explicit caveat.** Across the sources read, no family describes
+being unable to *find* an attendant; they describe what happens *after* they find one.
+That is **absence of evidence, not evidence of absence**, and it is weakened by where the
+evidence comes from: complaint boards collect people who received a bad service, not people
+who never got one, and English-language desk research skews metro. A family in a tier-3
+town who found nobody would be invisible to every source in this document.
+
+**What would change my mind:** if E0 in doc 19 finds that 4 of 10 families name *finding*
+an attendant as their hardest problem, the reframing in this document is wrong and the
+marketplace deserves reconsideration.
 
 ## 4. What families actually describe going wrong
 
@@ -112,7 +123,9 @@ Two structural facts make this worse rather than better over time:
 
 ## 7. Discovery conclusion
 
-**Rejected:** caregiver discovery and booking as the core problem.
+**Rejected — for the metro, paying, English-or-Hindi-speaking family this product
+targets:** caregiver discovery and booking as the core problem. Outside that segment the
+question is open, and this project does not claim to have answered it.
 **Adopted:** post-placement accountability and continuity, at its sharpest in the
 **first 30 days after a hospital discharge**, for a **family member who is not in the
 room**.

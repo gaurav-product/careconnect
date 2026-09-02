@@ -187,6 +187,32 @@ test.describe('honesty and safety, after the self-critique pass', () => {
   });
 });
 
+test.describe('the record cannot be quietly rewritten', () => {
+  test('a correction keeps the earlier value, visible to the family', async ({ page }) => {
+    await signIn(page, '9810012345');
+    await page.getByRole('link', { name: /Ramesh Iyer/ }).click();
+    // The seeded correction sits on day 7 of the episode.
+    await page.getByRole('link', { name: /Day 7:/ }).click();
+    await expect(page.getByRole('heading', { name: 'Corrections during the day' })).toBeVisible();
+    await expect(page.getByText(/He said he was not hungry/)).toBeVisible();
+    await expect(page.getByText(/cannot be tidied up after the fact/)).toBeVisible();
+  });
+
+  test('the north star says documented, never verified', async ({ page }) => {
+    await signIn(page, '9810012345');
+    await page.getByRole('link', { name: /Ramesh Iyer/ }).click();
+    await page.getByRole('link', { name: 'Insights' }).click();
+    await expect(page.getByRole('heading', { name: /North star — documented care days/ })).toBeVisible();
+    await expect(page.getByText(/Calling that .verified. would claim more than the product can do/)).toBeVisible();
+  });
+
+  test('the attendant is told exactly what the family can see', async ({ page }) => {
+    await signIn(page, '9810055555');
+    await expect(page.getByText(/What the family can see/)).toBeVisible();
+    await expect(page.getByText(/no location, no camera, no microphone/)).toBeVisible();
+  });
+});
+
 test.describe('failure states', () => {
   test('a wrong password says so without leaking which field was wrong', async ({ page }) => {
     await signIn(page, '9810012345', 'wrongpassword');

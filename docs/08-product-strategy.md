@@ -110,6 +110,23 @@ plain words that its numbers describe a seeded demo.
 - **The episode ends.** A 30-day product has 30-day retention unless the chronic-care
   transition works.
 
+## Who pays — the business-model question, challenged
+
+Five candidate payers. The MVP assumes the first, and the assumption deserves attacking
+because it is the one with the weakest evidence (H5).
+
+| Payer | The case for | The case against | Verdict |
+| --- | --- | --- | --- |
+| **The family** (assumed) | They already pay ₹35k–75k/month for the attendant (S8) and ₹3k–25k/month for reassurance from subscription providers (S10). The trigger and the anxiety are both theirs. Shortest path to a signal. | Nobody has shown reassurance is purchasable *unbundled*, and the nearest adjacent product is free (S17). A 30-day episode is a 30-day subscription. | **Test first** (doc 19, E2). Weakest evidence, cheapest test |
+| **The agency** | Distribution is instant — they place thousands of attendants. Good agencies could sell provable quality. | Makes the agency the customer, so the record belongs to the party it might indict. That destroys the one asset the product has: credibility with the family. HCAH already promises a 24-hour replacement (S22) — they compete on churn speed, not on continuity of knowledge. | **Rejected as the first payer.** Viable later as a *channel* the family still pays for (doc 19, E4) |
+| **The hospital** | Owns the trigger — the discharge — and carries readmission risk. Could hand the plan over at the desk. | Long enterprise sale, procurement, integration, and a clinical-governance review a prototype cannot survive. No readmission-linked payment reform in India that makes this a P&L line for them today. | **Later.** Best distribution, worst sales cycle |
+| **The employer** | Indian corporates increasingly buy elder-care benefits for employees whose parents are in another city — the exact persona. Solves the payer/user split cleanly. | Requires a benefits sale, a benefits administrator relationship, and enough employees hitting a discharge in a given year to justify a line item. **NOT YET VALIDATED** — no evidence gathered on this channel at all. | **The most under-explored option**, and worth adding to E4's conversations |
+| **The insurer** | A documented recovery is a readmission-risk signal, and PMJAY now covers 70+ (S2). | Indian health insurance *"mostly cover[s] inpatient expenditure"* (S5) — home recovery is outside the policy. No party is paid to prevent a readmission. Nothing to sell yet. | **Not a payer today.** Revisit if outpatient/home-recovery cover emerges |
+
+**Decision: the family pays, and that is a hypothesis with a named test, not a conclusion.**
+If E2 fails while the free tier converts, the fallback is the employer channel — not the
+agency, because the agency route trades away the product's only defensible asset.
+
 ## Sequence, if the tests pass
 
 1. **Now — MVP** One episode, one family, one or more attendants. Prove the record gets

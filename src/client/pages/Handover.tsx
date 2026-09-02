@@ -17,7 +17,7 @@ interface Pack {
   recent_observations: Array<Observation & { red_flag_label: string | null }>;
   outgoing_attendant: PlanMember | null;
   last_handover_note: { handover_note: string; date: string; slot: string } | null;
-  week: Array<{ date: string; day_number: number; logged: number; expected: number; verified: boolean; missed_critical: number }>;
+  week: Array<{ date: string; day_number: number; logged: number; expected: number; documented: boolean; missed_critical: number }>;
   recent_problems: string[];
 }
 
@@ -133,7 +133,7 @@ export default function HandoverPage() {
             <li
               key={d.date}
               className={`rounded-xl border px-3 py-2 text-sm ${
-                d.verified ? 'border-leaf-300 bg-leaf-50' : d.missed_critical ? 'border-alert-100 bg-alert-50' : 'border-sand-200'
+                d.documented ? 'border-leaf-300 bg-leaf-50' : d.missed_critical ? 'border-alert-100 bg-alert-50' : 'border-sand-200'
               }`}
             >
               <span className="block font-medium">Day {d.day_number}</span>

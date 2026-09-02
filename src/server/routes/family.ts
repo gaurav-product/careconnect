@@ -4,7 +4,7 @@ import { getDb } from '../db.js';
 import { requireAuth, requireMembership, type AuthedRequest } from '../auth.js';
 import { badRequest, notFound } from '../errors.js';
 import { istDate, nowIso, p } from '../util.js';
-import { getDayRecord, isVerifiedCareDay, planDates, getPlanBundle } from '../services/record.js';
+import { getDayRecord, isDocumentedCareDay, planDates, getPlanBundle } from '../services/record.js';
 import { sweepPlanAlerts } from '../services/alerts.js';
 import { track } from '../services/events.js';
 
@@ -18,7 +18,7 @@ familyRouter.get('/plans/:id/days/:date', (req: AuthedRequest, res) => {
   const record = getDayRecord(p(req, 'id'), p(req, 'date'));
   if (!record) throw notFound();
   track({ name: 'day_record_viewed', userId: req.userId, planId: p(req, 'id'), role: m.role });
-  res.json({ ...record, verified: isVerifiedCareDay(record) });
+  res.json({ ...record, documented: isDocumentedCareDay(record) });
 });
 
 familyRouter.get('/plans/:id/alerts', (req: AuthedRequest, res) => {
@@ -98,7 +98,7 @@ familyRouter.get('/plans/:id/metrics', (req: AuthedRequest, res) => {
   if (!bundle) throw notFound();
   const dates = planDates(bundle.plan);
   const days = dates.map((d) => getDayRecord(p(req, 'id'), d)!);
-  const verified = days.filter(isVerifiedCareDay).length;
+  const documented = days.filter(isDocumentedCareDay).length;
   const db = getDb();
 
   const alerts = db.prepare('SELECT * FROM alerts WHERE plan_id = ?').all(p(req, 'id')) as any[];
@@ -120,8 +120,8 @@ familyRouter.get('/plans/:id/metrics', (req: AuthedRequest, res) => {
 
   res.json({
     days_elapsed: days.length,
-    verified_care_days: verified,
-    verified_rate: days.length ? Number((verified / days.length).toFixed(2)) : 0,
+    documented_care_days: documented,
+    documented_rate: days.length ? Number((documented / days.length).toFixed(2)) : 0,
     logging_completeness: expected ? Number((logged / expected).toFixed(2)) : 0,
     missed_critical_items: missedCritical,
     shifts_started: shifts.length,
@@ -136,7 +136,7 @@ familyRouter.get('/plans/:id/metrics', (req: AuthedRequest, res) => {
       day_number: d.day_number,
       logged: d.score.logged,
       expected: d.score.expected,
-      verified: isVerifiedCareDay(d)
+      documented: isDocumentedCareDay(d)
     }))
   });
 });

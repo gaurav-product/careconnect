@@ -235,6 +235,31 @@ function seed() {
     }
   }
 
+  // A realistic correction: the attendant first recorded dinner as refused, then the
+  // patient ate late and she changed it. The earlier value stays in the record.
+  const correctionDate = addDays(dischargeDate, DAYS_ELAPSED - 3);
+  const dinnerTask = db
+    .prepare(`SELECT id, title_en FROM care_tasks WHERE plan_id = ? AND title_en LIKE 'Dinner%'`)
+    .get(planId) as { id: string; title_en: string } | undefined;
+  const nightShift = db
+    .prepare(`SELECT id FROM shifts WHERE plan_id = ? AND date = ? AND slot = 'night'`)
+    .get(planId, correctionDate) as { id: string } | undefined;
+  if (dinnerTask && nightShift) {
+    db.prepare(
+      `INSERT INTO task_logs (id,plan_id,shift_id,task_id,status,reason,logged_at,logged_by)
+       VALUES (?,?,?,?,'done',NULL,?,?)
+       ON CONFLICT(shift_id, task_id) DO UPDATE SET status='done', reason=NULL, logged_at=excluded.logged_at`
+    ).run(newId('tlg'), planId, nightShift.id, dinnerTask.id, t(correctionDate, '21:35'), attendant2Id);
+    db.prepare(
+      `INSERT INTO care_log_revisions
+         (id,plan_id,shift_id,date,entry_type,entry_ref,label,previous_status,previous_reason,new_status,new_reason,changed_at,changed_by)
+       VALUES (?,?,?,?, 'task', ?,?, 'missed', ?, 'done', NULL, ?, ?)`
+    ).run(
+      newId('rev'), planId, nightShift.id, correctionDate, dinnerTask.id, dinnerTask.title_en,
+      'He said he was not hungry', t(correctionDate, '21:35'), attendant2Id
+    );
+  }
+
   // The replacement, with the handover snapshot the incoming attendant reads.
   const snapshot = buildHandover(planId);
   db.prepare(

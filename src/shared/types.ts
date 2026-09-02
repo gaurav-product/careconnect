@@ -229,7 +229,22 @@ export interface DayRecord {
   vitals: VitalLog[];
   observations: Array<Observation & { red_flag_label: string | null }>;
   alerts: Alert[];
+  revisions: CareLogRevision[];
   score: { logged: number; expected: number; missed_critical: number };
+}
+
+/** A correction to an entry that had already been recorded. Never deleted. */
+export interface CareLogRevision {
+  id: string;
+  entry_type: 'task' | 'medication';
+  entry_ref: string;
+  label: string;
+  previous_status: string;
+  previous_reason: string | null;
+  new_status: string;
+  new_reason: string | null;
+  changed_at: string;
+  changed_by_name: string | null;
 }
 
 export const VITAL_META: Record<

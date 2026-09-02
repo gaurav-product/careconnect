@@ -35,7 +35,7 @@ Eleven tables, all keyed by `plan_id`, all timestamps stored as ISO-8601 UTC.
 
 `users` · `care_plans` · `plan_members` · `medications` · `care_tasks` · `vital_checks` ·
 `red_flags` · `shifts` · `task_logs` · `med_logs` · `vital_logs` · `observations` ·
-`alerts` · `handovers` · `notifications` · `analytics_events`
+`alerts` · `handovers` · `care_log_revisions` · `notifications` · `analytics_events`
 
 Three invariants do most of the work:
 
@@ -44,8 +44,13 @@ Three invariants do most of the work:
 - **`task_logs` is unique on (shift, task); `med_logs` on (medication, date, time).**
   Re-submitting corrects rather than duplicates — which matters on a flaky connection where
   a user taps twice.
-- **Nothing is deleted.** Stopping a medicine sets `active = 0`; ending an attendant sets
-  the membership to `ended`. The record can be read as it stood on any past day.
+- **Nothing is deleted, and nothing is silently rewritten.** Stopping a medicine sets
+  `active = 0`; ending an attendant sets the membership to `ended`. An entry can be
+  corrected during its shift, but every change appends to `care_log_revisions` with the
+  previous status, the previous reason, the time and the author — and the family's day
+  record renders it. Re-submitting an identical value (a double tap on a slow connection)
+  writes no revision. This is the difference between a record and a claim; see doc 15,
+  D-17.
 
 `handovers.snapshot` stores a **full JSON snapshot** at the moment of a change, deliberately
 denormalised: the pack a new attendant received must be reproducible even after the plan is
@@ -134,7 +139,11 @@ function.
 - No password reset flow at all.
 - No CSRF token. SameSite=Lax plus a JSON-only API covers the common cases, not all.
 - No Content-Security-Policy header.
-- No audit log of *reads* — who viewed a patient's record and when.
+- No audit log of *reads* — who viewed a patient's record and when. (Writes are now
+  audited: see `care_log_revisions`.)
+- No data-subject flow: a family cannot export or delete their plan from inside the
+  product. Deletion today means deleting the row, which cascades — there is no retention
+  policy and no "close and archive this episode" path. Named in the DPDP gaps below.
 - No encryption at rest; the SQLite file is plaintext on disk.
 - Rate limiting is in-process, so it resets on restart and does not span instances.
 
@@ -176,7 +185,9 @@ migration runner; the schema is already portable SQL and the query layer is smal
 
 ## Testing
 
-61 automated tests: unit tests for the pure logic (IST day boundaries, shift slots, vital
+95 automated checks: unit tests for the pure logic (IST day boundaries, shift slots, vital
 thresholds, the verified-care-day definition, display formatting), integration tests
-against the real API and a throwaway database, and 24 Playwright journeys across a mobile
-and a desktop viewport. Doc 17 has the detail.
+against the real API and a throwaway database, and 30 Playwright journeys across a mobile
+and a desktop viewport — plus `npm run audit:a11y`, which drives seven signed-in pages and
+checks contrast against the painted background, touch-target sizes, labelled controls,
+heading structure and landmarks. Doc 17 has the detail.

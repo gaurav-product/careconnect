@@ -65,6 +65,7 @@ export default function AttendantToday() {
   const [closing, setClosing] = useState(false);
   const [closeNote, setCloseNote] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
+  const [unsaved, setUnsaved] = useState<string | null>(null);
 
   const pending = useMemo(() => {
     if (!data) return 0;
@@ -111,9 +112,14 @@ export default function AttendantToday() {
     try {
       await api.post(`/shifts/${data!.shift!.id}/tasks`, { task_id: id, status, reason: reasonText ?? null });
       trackEvent('task_logged_ui', planId, { status });
+      setUnsaved(null);
       reload();
     } catch (e) {
-      notify((e as RequestError).message, 'alert');
+      const err = e as RequestError;
+      // A transient toast is the wrong pattern on a patchy connection: the attendant
+      // looks away, the toast dies, and they believe the entry saved. This stays put.
+      setUnsaved(err.status === 0 ? 'network' : err.message);
+      notify(err.message, 'alert');
     } finally {
       setBusy(null);
     }
@@ -129,9 +135,12 @@ export default function AttendantToday() {
         reason: reasonText ?? null
       });
       trackEvent('medication_logged_ui', planId, { status });
+      setUnsaved(null);
       reload();
     } catch (e) {
-      notify((e as RequestError).message, 'alert');
+      const err = e as RequestError;
+      setUnsaved(err.status === 0 ? 'network' : err.message);
+      notify(err.message, 'alert');
     } finally {
       setBusy(null);
     }
@@ -233,7 +242,7 @@ export default function AttendantToday() {
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
           <Logo compact />
           <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold leading-tight">{data.plan.patient_name}</p>
+            <h1 className="truncate font-semibold leading-tight">{data.plan.patient_name}</h1>
             <p className="text-xs text-ink-soft">
               {data.slot === 'day' ? 'Day shift · दिन की ड्यूटी' : 'Night shift · रात की ड्यूटी'}
             </p>
@@ -251,6 +260,20 @@ export default function AttendantToday() {
             <span>Emergency · आपातकाल: call {data.plan.emergency_contact_name || 'family'}</span>
             <span aria-hidden="true">→</span>
           </a>
+        )}
+
+        {unsaved && (
+          <div className="rounded-xl border border-alert-100 bg-alert-50 px-4 py-3" role="alert">
+            <p className="font-semibold text-alert-600">Your last entry did not save</p>
+            <p className="mt-1 text-sm text-ink-muted">
+              {unsaved === 'network'
+                ? 'The phone lost its connection. Nothing was recorded — tap the button again when the signal is back.'
+                : unsaved}
+            </p>
+            <p className="mt-1 text-sm text-ink-muted">
+              आपकी पिछली एंट्री सेव नहीं हुई। नेटवर्क आने पर दोबारा दबाएं।
+            </p>
+          </div>
         )}
 
         <div className="flex gap-2">
@@ -447,6 +470,14 @@ export default function AttendantToday() {
       )}
 
       <footer className="mx-auto mt-8 max-w-lg px-4 pb-4 text-center text-xs text-ink-soft">
+        <span className="mx-auto mb-3 block max-w-md rounded-xl border border-sand-200 bg-white px-3 py-2 text-left text-ink-muted">
+          <strong className="text-ink">What the family can see:</strong> what you record here, the time you recorded it,
+          and your name on the shift. Nothing else — no location, no camera, no microphone. You can read the full care
+          plan and the handover any time.
+          <span className="mt-1 block">
+            परिवार सिर्फ़ वही देखता है जो आप यहाँ लिखते हैं — समय और आपका नाम। लोकेशन या कैमरा नहीं।
+          </span>
+        </span>
         CareConnect keeps a record. It does not give medical advice and it is not an emergency service — in an emergency,
         call an ambulance and the family first.
         <span className="mt-1 block">

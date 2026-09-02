@@ -88,14 +88,25 @@ loaded, and more dependent on whoever is standing in the room.
 | Papa (US analogue) — USD 242m raised | Shut down; care-quality problems cited | C (S11) |
 | Elcare India — CareMates model | 200+ families, 11 cities, ~₹5 lakh monthly revenue, ~30% margins claimed; **ceased operations 2024** when scaling required "substantial investment in training, infrastructure, and manpower" | C (S12) |
 
-These are grade-C figures and I do not present them as audited. But the *pattern* is
-consistent and it is the single most important strategic input in this project:
+These are grade-C figures and I do not present them as audited. Two of the four are a
+single community post's claims. The honest reading is narrower than the pattern is
+tempting to make it:
 
-> **Every well-funded attempt at Indian elder care has failed on the operations of
-> supplying and quality-controlling human labour, not on demand.**
+> **INFERENCE (from four cases, none independently verified):** the visible failures in
+> this market cluster on the operations of supplying and quality-controlling human labour
+> rather than on demand.
 
-A product that owns supply inherits those economics. A product that owns the **record**
-does not. That is the market read behind the strategy in doc 08.
+Four cases is not a base rate. I have no data on how many supply-owning home-care
+businesses are quietly profitable, and survivorship works in both directions — the
+companies that raised the most are also the ones written about. What this justifies is a
+*prior*, not a law: **owning supply here has repeatedly proved capital-hungry, so a
+one-person project should not start there.** It does not prove that owning supply cannot
+work.
+
+**HYPOTHESIS** A product that owns the record rather than the supply avoids those
+economics. That is the bet behind the strategy in doc 08 — and it is a bet, not a finding:
+nobody has yet shown that a record-only product in this market can acquire families
+cheaply enough to survive either.
 
 ## Regulatory context
 

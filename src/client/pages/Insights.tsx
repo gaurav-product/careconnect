@@ -7,8 +7,8 @@ import { planNav } from './FamilyDashboard';
 
 interface Metrics {
   days_elapsed: number;
-  verified_care_days: number;
-  verified_rate: number;
+  documented_care_days: number;
+  documented_rate: number;
   logging_completeness: number;
   missed_critical_items: number;
   shifts_started: number;
@@ -18,7 +18,7 @@ interface Metrics {
   alerts_open: number;
   urgent_alerts: number;
   median_minutes_to_acknowledge: number | null;
-  trend: Array<{ date: string; day_number: number; logged: number; expected: number; verified: boolean }>;
+  trend: Array<{ date: string; day_number: number; logged: number; expected: number; documented: boolean }>;
 }
 
 function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
@@ -69,13 +69,19 @@ export default function InsightsPage() {
       </p>
 
       <Card className="mb-4">
-        <SectionTitle>North star — verified care days</SectionTitle>
+        <SectionTitle>North star — documented care days</SectionTitle>
         <p className="mb-3 text-sm text-ink-muted">
           A day counts once every must-not-miss medicine and task was recorded, at least 80% of the day's items were
           recorded, and no urgent alert was left open overnight.
         </p>
+        <p className="mb-4 rounded-xl border border-sand-200 bg-sand-50 px-3 py-2 text-sm text-ink-muted">
+          <strong className="text-ink">Why &ldquo;documented&rdquo; and not &ldquo;verified&rdquo;:</strong> CareConnect
+          cannot confirm that a tablet was swallowed or a walk happened. It records what the person on duty entered, at a
+          time, under their name, with every correction kept. Calling that &ldquo;verified&rdquo; would claim more than
+          the product can do.
+        </p>
         <div className="grid gap-3 sm:grid-cols-3">
-          <Stat label="Verified care days" value={`${data.verified_care_days} of ${data.days_elapsed}`} sub={pct(data.verified_rate)} />
+          <Stat label="Fully documented days" value={`${data.documented_care_days} of ${data.days_elapsed}`} sub={pct(data.documented_rate)} />
           <Stat label="Record completeness" value={pct(data.logging_completeness)} sub="items recorded ÷ items expected" />
           <Stat label="Missed critical items" value={String(data.missed_critical_items)} sub="lower is better" />
         </div>
@@ -144,7 +150,7 @@ export default function InsightsPage() {
                 <th scope="col" className="py-2 pr-4 font-medium">Day</th>
                 <th scope="col" className="py-2 pr-4 font-medium">Date</th>
                 <th scope="col" className="py-2 pr-4 font-medium">Recorded</th>
-                <th scope="col" className="py-2 font-medium">Verified</th>
+                <th scope="col" className="py-2 font-medium">Documented</th>
               </tr>
             </thead>
             <tbody>
@@ -155,7 +161,7 @@ export default function InsightsPage() {
                   <td className="py-2 pr-4">
                     {t.logged}/{t.expected}
                   </td>
-                  <td className="py-2">{t.verified ? 'Yes' : 'No'}</td>
+                  <td className="py-2">{t.documented ? 'Yes' : 'No'}</td>
                 </tr>
               ))}
             </tbody>

@@ -3,7 +3,10 @@
 ## Method, and its honest limits
 
 **No primary research was conducted.** No interviews, no surveys, no diary studies, no
-usability tests with real families or attendants. This document is a synthesis of
+usability tests with real families or attendants. The guides that would fix this —
+family, attendant and hospital/agency interview scripts, an observation protocol and
+consent guidance — are written and ready in
+[19-validation-plan.md](19-validation-plan.md). None has been used. This document is a synthesis of
 secondary sources: peer-reviewed studies, government data, journalism, provider
 documentation, and public complaints.
 
@@ -124,4 +127,5 @@ answer. **Not yet validated** — experiment E2 in doc 14.
 | Does the elder object to being logged? | Consent and dignity risk | E1, and a consent screen in the plan setup |
 
 Every one of these is answerable for less than the cost of a week of engineering, which
-is the strongest argument for having stopped building where this MVP stops.
+is the strongest argument for having stopped building where this MVP stops. Doc 19 turns
+each row of this table into a specific question in a specific guide.

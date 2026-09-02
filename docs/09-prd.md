@@ -37,6 +37,7 @@ keeps.
 | P0-8 | **Handover pack, generated on attendant change** | …the differentiator disappears and CareConnect becomes a general tracker in a category that already has a free one. **KEEP** |
 | P0-9 | **Bilingual attendant interface (English + Hindi on every action)** | …the primary data source cannot read the buttons. This is not localisation polish; it is the input layer. **KEEP** |
 | P0-10 | **Accounts, roles and per-plan access** | …health information about a named person has no boundary. Non-negotiable. **KEEP** |
+| P0-11 | **Append-only corrections** — an entry can be changed during its shift, but the earlier value, its reason, the time and the author are kept and shown to the family | …the record becomes unfalsifiable. Any inconvenient entry could be quietly cleaned up before the shift closed, and a record that can be silently rewritten is not evidence of anything. Added in iteration 2 after the technical audit (D-17). **KEEP** |
 
 ### Cut from P0 during the removal test
 
@@ -111,8 +112,10 @@ device integration · regional languages beyond Hindi.
   given requires a reason.
 - Readings: blood pressure (both numbers required), sugar, temperature, SpO₂, pulse,
   weight.
-- Any entry can be corrected within the same shift; corrections overwrite rather than
-  duplicate.
+- Any entry can be corrected within the same shift. The current value is replaced, but the
+  previous status, previous reason, time and author are appended to an immutable revision
+  log and shown in the family's day record. Re-submitting an identical value writes no
+  revision, so a double tap on a slow connection is not recorded as a correction.
 - Only the attendant on the open shift may record care. Family members may add
   observations at any time.
 
@@ -139,7 +142,7 @@ Deterministic rules only, no inference:
 
 ### FR-7 Family record
 - Today: who is on duty, open alerts sorted urgent-first, today's progress, and a
-  seven-day strip marking verified days.
+  seven-day strip marking fully documented days.
 - Any day: shifts with handover notes, every dose and task with status and reason,
   readings with out-of-range marking, observations, and that day's alerts.
 - Insights: the measurement definitions from doc 13 computed over this episode, labelled
@@ -179,6 +182,9 @@ attendant.
 5. Every core flow, failure state and edge case in doc 17 passes on mobile and desktop.
 6. No console errors on any screen; automated tests green.
 7. Nothing in the product or its documentation claims traction that does not exist.
+8. A care entry cannot be changed without the change being visible to the family.
+9. The product never claims to *verify* care — only to document it, with attribution.
+10. The mechanical accessibility sweep passes on every signed-in page, in both viewports.
 
-**All seven are met.** What is *not* met, and cannot be by building alone, is any evidence
+**All ten are met.** What is *not* met, and cannot be by building alone, is any evidence
 that real families and attendants would use it — which is doc 14's job.

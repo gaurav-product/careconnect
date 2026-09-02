@@ -204,7 +204,7 @@ describe('metrics', () => {
     const res = await family.get(`/api/plans/${planId}/metrics`);
     expect(res.status).toBe(200);
     expect(res.body.days_elapsed).toBeGreaterThan(0);
-    expect(res.body.verified_care_days).toBeLessThanOrEqual(res.body.days_elapsed);
+    expect(res.body.documented_care_days).toBeLessThanOrEqual(res.body.days_elapsed);
     expect(res.body.logging_completeness).toBeGreaterThanOrEqual(0);
     expect(res.body.logging_completeness).toBeLessThanOrEqual(1);
   });

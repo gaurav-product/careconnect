@@ -34,6 +34,33 @@ kind of evidence and the difference matters when you are deciding what to build.
 | S19 | [EzyHelpers, *Safe hospital-to-home discharge for elderly*](https://www.ezyhelpers.com/blog/safe-hospital-to-home-discharge-elderly-india) | C | Medication reconciliation as the first-week failure point |
 | S20 | [KPMG India, *Impact of the DPDP Act and Rules on healthcare*](https://kpmg.com/in/en/insights/2025/12/the-privacy-prescription-impact-of-dpdp-act-and-rules-in-healthcare-and-life-sciences-sector.html) | B | DPDP consent, minimisation, 72-hour breach reporting obligations |
 | S21 | [Samarth Elder Care, *Home care attendant for the elderly in India*](https://care.samarth.community/blog/medical-care/home-care-attendant-elderly-india/) | C | What attendants do; the verification and reporting a family should insist on |
+| S22 | [HCAH — caregiver services](https://www.hcah.in/caregiver/) | C | Shift structure, ₹1,000/day entry price, police/Aadhaar verification, 24-hour replacement, family contact by phone/WhatsApp/email |
+| S23 | [Antara Senior Care — care at home for families abroad](https://www.antaraseniorcare.com/care-at-home-international) | C | A Max-group-backed player targeting exactly this beachhead, with care managers and no stated family reporting mechanism |
+
+## Claim register — the load-bearing conclusions, audited
+
+Every conclusion the strategy rests on, with the strongest honest label it can carry.
+Audited in the second iteration; several were downgraded.
+
+| # | Claim | Label | Evidence | Was it downgraded? |
+| --- | --- | --- | --- | --- |
+| C1 | India's 60+ population reaches ~230m by 2036; 80+ grows 279% by 2050 | **FACT** | S1, S2 (A) | No |
+| C2 | 70% of elderly depend on family; 78% have no pension | **FACT** | S5 (B) | No |
+| C3 | Home healthcare is ~USD 6.4bn, 12.9% CAGR, highly fragmented, no national regulatory framework | **FACT** | S4 (B) | No |
+| C4 | 33.7% polypharmacy, 28.8% potentially inappropriate medication in urban Indian older adults | **FACT** | S6 (A) | No |
+| C5 | Large providers advertise thousands of caregivers and same-day allocation | **OBSERVATION** (company marketing) | S14 (C) | Downgraded from FACT — it is a vendor claim |
+| C6 | Discovery is not the binding constraint for metro paying families | **INFERENCE** | Absence of contrary evidence across S9–S16 | Downgraded. Absence of evidence ≠ evidence of absence; scope narrowed to metro paying families; falsifier written into doc 01 |
+| C7 | Continuity breaks routinely when attendants change | **OBSERVATION** | S9, S15, S16 (C) — consistent across independent providers | No, but the *quantified harm* in S16 is vendor marketing and is quoted nowhere |
+| C8 | Funded attempts failed on operations rather than demand | **INFERENCE from 4 unverified cases** | S11, S12 (C) | Downgraded from "every funded attempt failed". Four cases is not a base rate |
+| C9 | No competitor owns the record while owning no supply | **OBSERVATION, not a census** | Desk review only | Downgraded from "the only player". A regional or agency-internal tool would not have surfaced |
+| C10 | Families will pay for reassurance unbundled from service | **HYPOTHESIS** | None — nearest product is free (S17) | Unchanged; flagged as the weakest link since the first iteration |
+| C11 | Attendants will log reliably in under five minutes | **HYPOTHESIS** | None | Unchanged; existential |
+| C12 | The handover pack improves continuity | **HYPOTHESIS** | None | Unchanged. Mechanism built, effect untested (doc 19, E3) |
+| C13 | An attendant would experience mandatory logging as surveillance | **ASSUMPTION** | None | Named for the first time in iteration 2; asked directly in the attendant guide, doc 19 A2 Q15 |
+
+**What this table is for.** An interviewer should be able to attack any row and get a
+straight answer. The rows most worth attacking are C6, C9 and C13 — the two that shaped the
+strategy on thin evidence, and the one that could invalidate the data source.
 
 ## How claims are labelled in these documents
 
@@ -43,5 +70,6 @@ kind of evidence and the difference matters when you are deciding what to build.
 - **ASSUMPTION** — something taken as true without evidence, listed so it can be attacked.
 
 No user interviews were conducted for this project. Wherever a real product would have
-primary research, this repository says **Not yet validated** instead of inventing a
-number.
+primary research, this repository says **NOT YET VALIDATED** instead of inventing a number.
+The interview guides that would close these gaps are written and ready in
+[19-validation-plan.md](19-validation-plan.md); none has been used.

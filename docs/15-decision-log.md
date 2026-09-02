@@ -247,3 +247,125 @@ marked **↺ REVERSAL** and written up in full.
 - **Reason** Building past an unvalidated existential assumption is the most expensive
   mistake available. The MVP is exactly big enough to run the experiments that would settle
   it.
+
+
+---
+
+# Iteration 2 — audit, honesty and integrity pass
+
+The second pass added no features. Every decision below came out of auditing what was
+already there.
+
+---
+
+### D-17 ↺ REVERSAL · Care entries are append-only; corrections are shown, not hidden
+
+- **Date** Iteration 2, from the technical audit.
+- **Problem** Task and dose entries used an upsert. An attendant could record *"missed —
+  strip finished"*, then change it to *"given"* before closing the shift, and the family
+  would see only the final value. In a product whose entire asset is the record, that made
+  the record **unfalsifiable**: any inconvenient entry could be quietly cleaned up.
+- **Options** (a) leave it — corrections are normal and the last value is the truth;
+  (b) forbid corrections once saved; (c) allow corrections and keep every earlier value.
+- **Evidence** No external evidence needed. It is a property of the data model, and it
+  contradicts the product's own promise (doc 08, principle 1).
+- **Trade-off** (b) would have been simpler and much worse: an attendant who taps the
+  wrong button on a small screen must be able to fix it, and a product that punishes
+  correction produces avoidance. (c) costs one extra table and one extra section on the
+  family's day screen.
+- **Decision** (c). Every change to an existing entry appends to `care_log_revisions`, and
+  the family's day record shows *previous → new* with the time and who made it.
+- **Result** Implemented with five tests. The demo seeds a realistic correction — dinner
+  recorded as refused, then changed to done when the patient ate late.
+- **Revisit if** attendants report that visible corrections feel punitive (asked directly
+  in doc 19, A2). The mitigation would be framing, not deletion.
+
+---
+
+### D-18 ↺ REVERSAL · "Verified care days" renamed to "documented care days"
+
+- **Date** Iteration 2, from the evidence audit.
+- **Problem** The north-star metric claimed more than the system can do. Nothing in
+  CareConnect verifies that care happened; it records what one person typed.
+- **Options** (a) keep the word and define it carefully in the docs; (b) build real
+  verification — photos, geofencing, device readings; (c) rename to what it is.
+- **Evidence** The definition itself. Also doc 15 D-05: any proof mechanism strong enough
+  to justify "verified" pushes the product toward surveillance and threatens the data
+  source.
+- **Trade-off** "Verified" is a better word commercially. "Documented" is the true one.
+- **Decision** (c), across the code, the API, the interface and every document — plus a
+  card in the product explaining the difference to the family, and a written statement of
+  what would let us honestly use "verified" later (a second independent signal).
+- **Result** Renamed everywhere; the E2E suite asserts the product never says "verified".
+- **Revisit if** a second independent signal exists for the same event.
+
+---
+
+### D-19 · Told the attendant exactly what the family can see
+
+- **Date** Iteration 2, from the privacy and safety review.
+- **Problem** The product asks a worker to generate a record about their own performance,
+  which their employer's customer reads. Nothing on screen told them what was visible.
+- **Options** (a) say nothing; (b) a privacy policy link; (c) a permanent, plain-language,
+  bilingual statement on the shift screen.
+- **Evidence** **ASSUMPTION (C13)** that unexplained logging reads as surveillance — named
+  in the claim register as unvalidated, and asked directly in the attendant interview
+  guide.
+- **Trade-off** More text on a small screen.
+- **Decision** (c): *what you record, the time, your name — no location, no camera, no
+  microphone*, in English and Hindi, plus links to the full care plan so nothing about the
+  patient is withheld from them either.
+- **Result** Shipped. Also settled a related question: attendants can read the plan's alert
+  history. **There is no secret file about a worker in this product.**
+
+---
+
+### D-20 · Failed saves stay on screen instead of a toast
+
+- **Date** Iteration 2, from the accessibility review.
+- **Problem** A failed entry showed a toast that vanished in 4.5 seconds. On a patchy
+  connection the attendant looks away, the toast dies, and they believe it saved.
+- **Options** (a) retry automatically; (b) queue offline; (c) a persistent banner until the
+  next successful action.
+- **Evidence** Poor connectivity is a stated design constraint (doc 05). Silent data loss
+  is the worst possible failure for a record product.
+- **Trade-off** (b) is the right long-term answer and is real work — a local queue, conflict
+  rules, and a sync state to explain. It stays P1.
+- **Decision** (c) now, (b) next: a bilingual banner that says the entry did not save,
+  nothing was recorded, and to tap again when the signal returns.
+
+---
+
+### D-21 · Accessibility held to a measured bar, not an assertion
+
+- **Date** Iteration 2.
+- **Problem** Iteration 1 claimed "best-effort accessibility" with nothing measuring it.
+- **Options** (a) keep asserting; (b) run a third-party audit tool; (c) write a small audit
+  that checks the real pages and fails the build.
+- **Decision** (c) — `npm run audit:a11y` computes contrast against the actually painted
+  background for every text node, checks touch targets (44px on a phone, WCAG 2.1 AA's 24px
+  on pointer screens), labelled controls, alt text, heading structure and landmarks, across
+  seven signed-in pages.
+- **Result** **145 issues on the first run, 0 after fixes.** The largest was secondary text
+  at 4.40:1 — including every Hindi sub-label on the attendant screen, i.e. the users least
+  able to absorb low contrast. Palette tokens changed; the claim is now measured.
+- **Revisit** Still no testing with an actual assistive-technology user. That remains a
+  stated gap, not a solved problem.
+
+---
+
+### D-22 · Downgraded three of my own conclusions
+
+- **Date** Iteration 2, from the evidence audit.
+- **Problem** Three claims were stated more strongly than the evidence carried: *"every
+  well-funded attempt failed"* (four unverified cases), *"the only player that owns the
+  record"* (a desk review, not a census), and *"no family described being unable to find an
+  attendant"* (absence of evidence in sources that structurally exclude such families).
+- **Options** (a) leave them — they are directionally right and read better; (b) qualify
+  them in place.
+- **Decision** (b), plus a claim register in doc 00 that grades all thirteen load-bearing
+  conclusions and records which were downgraded and why.
+- **Reason** The strategy does not actually need the stronger versions. It needs "owning
+  supply has repeatedly proved capital-hungry, so a one-person project should not start
+  there", which is defensible. Overstating it would hand an interviewer a free hit on the
+  one thing this project is selling: that the reasoning can be trusted.

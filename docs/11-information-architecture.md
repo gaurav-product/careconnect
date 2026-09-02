@@ -91,7 +91,7 @@ The interface uses the words families use, not the words the schema uses.
 | plan_member (attendant) | "attendant" — never "caregiver", "resource" or "user" |
 | task_log status `missed` | "could not do" for the attendant; "missed" in the family's record |
 | alert severity `urgent` / `watch` | "Needs a decision" / "Worth a look" |
-| verified care day | "verified day", always defined on the same screen it appears |
+| documented care day | "fully documented", always defined on the same screen it appears — never "verified", which would claim a check nobody performed |
 | handover | "handover pack" |
 
 The alert severities are the clearest example of writing for the reader: `urgent` is

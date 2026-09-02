@@ -3,6 +3,10 @@
 The MVP exists to make these experiments cheap, not to substitute for them. They are
 ordered by what would kill the product fastest — the cheapest way to be wrong is first.
 
+> **Full protocols, interview guides, consent language and the live experiment tracker are
+> in [19-validation-plan.md](19-validation-plan.md).** This document is the summary and the
+> sequencing argument; doc 19 is the instrument. **Every experiment below is NOT STARTED.**
+
 ---
 
 ## E1 · Do families actually experience this as a problem?

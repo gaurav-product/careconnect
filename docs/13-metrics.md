@@ -7,9 +7,36 @@ rather than aspirational — and it says so on the screen.
 
 ## North Star Metric
 
-> **Verified care days per active patient per week.**
+> **Documented care days per active patient per week.**
 
-A day is **verified** when all three hold:
+### Why it is no longer called "verified" ↺
+
+The first version of this metric was *verified care days*, and that word was wrong.
+
+CareConnect cannot verify anything. It cannot confirm that a tablet was swallowed, that a
+walk happened, or that a wound was actually looked at. What it can do is record **what the
+person on the scene entered, at a time, under their name, on a shift they had to start —
+with every correction kept**. That is documentation with attribution and an audit trail.
+It is a real and useful thing, and it is not verification.
+
+The distinction matters for three reasons:
+
+1. **It would be a claim the product cannot support.** A family reading "verified" would
+   reasonably assume something or someone checked. Nothing did.
+2. **It hides the actual failure mode.** The risk in this product is not missing data; it
+   is *plausible but false* data — an attendant entering the whole day from memory at
+   9:55pm. Calling that a verified day would launder it. Calling it a documented day leaves
+   the question open, which is why the burst-logging guardrail exists.
+3. **It changes what we would build next.** If the goal were verification, the roadmap
+   would fill with proof mechanisms — photos, geofencing, timestamps the attendant cannot
+   control. Most of those turn the product into surveillance and break the data source
+   (doc 15, D-05). Naming the metric honestly keeps that pressure off.
+
+**What would let us honestly use the word "verified":** a second independent signal for the
+same event — a family or nurse confirmation, a connected BP monitor writing its own reading,
+a pharmacy dispensing record. Until such a signal exists, the metric stays "documented".
+
+A day is **fully documented** when all three hold:
 
 1. Every must-not-miss medicine and every important task for that day was recorded — none
    left blank, none missed.
@@ -19,7 +46,7 @@ A day is **verified** when all three hold:
 ### Why this one
 
 - **It measures delivered value, not usage.** Sessions, logins and screen time measure our
-  convenience. A verified day is the family's actual outcome: *today, care demonstrably
+  convenience. A documented day is the family's actual outcome: *today, care was demonstrably
   happened and nothing dangerous is outstanding.*
 - **It cannot be gamed by one side alone.** It needs the attendant to log, the plan to be
   real, and the family to close what they were alerted about. Any one party going quiet
@@ -34,7 +61,7 @@ because the leg hurts. Demanding 100% would either punish honest recording or pu
 attendants to tick everything, destroying the data. The critical items are the hard gate;
 the rest is a completeness floor.
 
-**Target:** ≥ 5 verified days in every 7, from day 3 of an episode onward. **Not yet
+**Target:** ≥ 5 fully documented days in every 7, from day 3 of an episode onward. **Not yet
 validated.**
 
 ## Activation
@@ -89,7 +116,10 @@ decision already live. Starting again elsewhere means retyping the discharge she
 | **Missed critical items per episode** | Must-not-miss medicines or important tasks recorded as missed | Tracked, not targeted — a lower number may mean better care *or* worse honesty |
 | **Median time to acknowledge an urgent alert** | Alert raised → family acknowledges | < 60 minutes while delivery is stubbed; < 15 minutes once WhatsApp is live |
 | **Alert resolution rate** | Alerts closed with a note ÷ alerts raised | ≥ 90% within 24 hours |
-| **Handover completeness** | Attendant changes where a pack was generated and opened by the incoming attendant | ≥ 80% |
+| **Handover completeness** | Attendant changes where a pack was generated *and opened by the incoming attendant within their first shift* | ≥ 80% |
+| **Handover sufficiency** | Clarifying questions from a new attendant to the family in their first 72 hours (measured in E3) | fewer than the control arm |
+| **Attendant compliance** | Shifts where every critical item carries an entry — done, missed or not needed | ≥ 90% |
+| **Correction rate** | Entries later changed ÷ entries recorded. Tracked, not targeted: **a rate near zero is as suspicious as a high one**, because real care produces corrections |
 | **Continuity recovery** | Verified-day rate in the 3 days after an attendant change ÷ the 3 days before | ≥ 0.9 |
 
 That last one is the direct measure of the differentiator, and the metric I would defend
@@ -106,6 +136,9 @@ across a change, which is the entire strategic claim.
 | **Alert volume** | > 3 alerts per family per day sustained | Same, from the other direction |
 | **Attendant churn after adoption** | attendants leaving plans faster than a matched baseline | The tool is being experienced as surveillance |
 | **Blank-reason rate** | reasons under 5 characters trending up | Compliance without communication; the field has become a toll |
+| **Abandonment** | plans with no entry for 3 consecutive days | The family has gone back to WhatsApp and nobody has said so |
+| **Privacy incidents** | any access to a plan by a non-member; any export of free text into analytics | Must be zero. A single incident stops the roadmap |
+| **Late-entry clustering** | share of entries made after the shift's own window closed | Documentation drifting into recollection |
 
 The first two exist because the biggest risk in this product is not that people ignore it.
 It is that they use it dishonestly, which would produce a beautiful dashboard describing
@@ -122,10 +155,24 @@ text ever enter analytics.**
 `medication_added` · `medication_stopped` · `task_added` · `attendant_invited` ·
 `invite_accepted` · `shift_started` · `task_logged` · `medication_logged` · `vital_logged`
 · `observation_reported` · `shift_closed` · `alert_acknowledged` · `alert_resolved` ·
-`day_record_viewed` · `handover_pack_viewed` · `attendant_ended` · `care_plan_status_changed`
+`day_record_viewed` · `handover_pack_viewed` · `attendant_ended` · `care_plan_status_changed` ·
+`care_entry_corrected`
 
 Client-side events post to `/api/events`; server-side events are written inline with the
 action so a failed analytics write can never break a care action.
+
+## Reading the metric honestly
+
+Three failure modes this metric cannot see, listed so nobody mistakes a green number for
+good care:
+
+- **A high documented rate with fabricated entries.** Burst logging and late-entry
+  clustering are the only signals we have; neither is proof.
+- **A high documented rate on a plan that is wrong.** If the family typed the medicines
+  incorrectly at setup, the product will document adherence to the wrong regimen perfectly.
+- **A low documented rate with excellent care.** An attendant who is busy keeping someone
+  alive is not filling in a checklist. That is why no attendant is ever scored on it, and
+  why the metric is defined per patient rather than per caregiver.
 
 ## What the demo numbers are
 

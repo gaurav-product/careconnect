@@ -5,6 +5,7 @@ import { requireAuth, requireMembership, type AuthedRequest } from '../auth.js';
 import { badRequest, conflict, forbidden, notFound } from '../errors.js';
 import { istDate, istTime, newId, nowIso, parseJson, slotForTime, toBool, p } from '../util.js';
 import { getPlanBundle, slotForWindow } from '../services/record.js';
+import { recordRevision } from '../services/revisions.js';
 import { isOutOfRange, raiseAlert, severityForVital } from '../services/alerts.js';
 import { track } from '../services/events.js';
 import type { ShiftSlot, VitalType } from '../../shared/types.js';
@@ -189,11 +190,27 @@ careRouter.post('/shifts/:shiftId/tasks', (req: AuthedRequest, res) => {
   if (parsed.data.status !== 'done' && !parsed.data.reason?.trim()) {
     throw badRequest('Please say briefly why it could not be done — the family will see this.');
   }
+  const previous = db
+    .prepare('SELECT status, reason FROM task_logs WHERE shift_id = ? AND task_id = ?')
+    .get(shift.id, task.id) as { status: string; reason: string | null } | undefined;
+
   db.prepare(
     `INSERT INTO task_logs (id, plan_id, shift_id, task_id, status, reason, logged_at, logged_by)
      VALUES (?,?,?,?,?,?,?,?)
      ON CONFLICT(shift_id, task_id) DO UPDATE SET status = excluded.status, reason = excluded.reason, logged_at = excluded.logged_at`
   ).run(newId('tlg'), shift.plan_id, shift.id, task.id, parsed.data.status, parsed.data.reason ?? null, nowIso(), req.userId!);
+
+  recordRevision({
+    planId: shift.plan_id,
+    shiftId: shift.id,
+    date: shift.date,
+    entryType: 'task',
+    entryRef: task.id,
+    label: task.title_en,
+    previous,
+    next: { status: parsed.data.status, reason: parsed.data.reason ?? null },
+    changedBy: req.userId!
+  });
 
   if (parsed.data.status === 'missed' && toBool(task.critical)) {
     raiseAlert({
@@ -231,6 +248,10 @@ careRouter.post('/shifts/:shiftId/meds', (req: AuthedRequest, res) => {
   if (parsed.data.status !== 'given' && !parsed.data.reason?.trim()) {
     throw badRequest('Please say briefly what happened — the family will see this.');
   }
+  const previousMed = db
+    .prepare('SELECT status, reason FROM med_logs WHERE medication_id = ? AND date = ? AND scheduled_time = ?')
+    .get(med.id, shift.date, parsed.data.scheduled_time) as { status: string; reason: string | null } | undefined;
+
   db.prepare(
     `INSERT INTO med_logs (id, plan_id, shift_id, medication_id, date, scheduled_time, status, reason, logged_at, logged_by)
      VALUES (?,?,?,?,?,?,?,?,?,?)
@@ -240,6 +261,18 @@ careRouter.post('/shifts/:shiftId/meds', (req: AuthedRequest, res) => {
     newId('mlg'), shift.plan_id, shift.id, med.id, shift.date, parsed.data.scheduled_time,
     parsed.data.status, parsed.data.reason ?? null, nowIso(), req.userId!
   );
+
+  recordRevision({
+    planId: shift.plan_id,
+    shiftId: shift.id,
+    date: shift.date,
+    entryType: 'medication',
+    entryRef: `${med.id}:${parsed.data.scheduled_time}`,
+    label: `${med.name} ${med.dose} at ${parsed.data.scheduled_time}`,
+    previous: previousMed,
+    next: { status: parsed.data.status, reason: parsed.data.reason ?? null },
+    changedBy: req.userId!
+  });
 
   db.prepare(
     `UPDATE alerts SET status = 'resolved', resolved_at = ?, resolution_note = 'Recorded by attendant'

@@ -113,6 +113,122 @@ sequencing argument (wedge now, marketplace later) credible instead of hand-wave
 5. **How does the patient consent to being recorded?** Unresolved, and the honest answer is
    that the MVP has no answer.
 
+---
+
+# The skeptical interviewer
+
+Fifteen questions a good PM interviewer would ask, answered as honestly as the evidence
+allows. Where the honest answer is weak, it is marked **UNVALIDATED** rather than dressed
+up.
+
+**1. Why this problem?**
+Because the evidence contradicted the brief. Supply is abundant — one provider advertises
+2,000+ caregivers and three-hour allocation (C-grade, their own marketing); every source
+describing family pain describes what happened *after* the attendant arrived. The gap is
+between placing a person and knowing what that person did.
+
+**2. Why this user?**
+The adult child living elsewhere is the only actor who is simultaneously anxious, paying,
+and digitally capable. The elder scores 1 on both willingness to pay and digital access;
+the local sibling has line of sight and needs less; the agency is conflicted. Segment
+scoring is in doc 07.
+
+**3. Why now?**
+Three things converge: migration has separated payer from patient at scale; hospital-at-home
+is pushing discharges earlier, so the first 30 days at home are more clinically loaded; and
+70% of elders depend on family while 78% have no pension, so the adult child is the
+purchaser by default. None of this is new *this quarter* — the honest version is that the
+conditions have been building for a decade and there is no sharp "now".
+
+**4. Why not caregiver discovery?**
+It is served — by agencies, hospital desks, national providers and WhatsApp networks — and
+serving it better means owning supply, which is where the visible capital in this market has
+gone (INFERENCE from four unverified cases; doc 00, C8). **Caveat:** discovery may genuinely
+be unsolved in tier-3 and rural India, where willingness to pay and digital access are also
+lowest. This product does not claim to have answered that.
+
+**5. Why wouldn't Portea build this?**
+They could, in a quarter. They won't build it *well*, because a supplier's record of its own
+performance is the one document a worried family has least reason to believe — and because
+their commercial incentive is utilisation, which means rotating staff, which is what breaks
+continuity. HCAH's own answer to churn is a 24-hour replacement promise: fix the vacancy,
+not the knowledge. **This is a positioning bet, not a moat.**
+
+**6. Why wouldn't hospitals build this?**
+Some will try. They own the trigger and carry readmission risk. But a hospital's tool stops
+at its own patients and its own liability posture, and there is no payment reform in India
+making home-recovery documentation a P&L line for them yet. The realistic outcome is that a
+hospital becomes a *distribution channel*, not a competitor.
+
+**7. Why wouldn't WhatsApp solve this?**
+For coordination it already does, and the product deliberately does not fight it (D-04,
+D-09: in-app chat is a permanent non-goal). What WhatsApp cannot do is produce a structured
+record: no expectation to measure against, no shift boundary, no attribution, no
+"unresolved" state, and nothing that survives the attendant leaving. A photo of a BP monitor
+in a group chat is not a record.
+
+**8. Who pays?**
+The family, in the current design — and that is the weakest link (H5, **UNVALIDATED**).
+Doc 08 now scores five payers. The fallback if families won't pay unbundled is the employer
+elder-care benefit, not the agency, because the agency route trades away the product's only
+defensible asset.
+
+**9. Why would attendants cooperate?**
+Three arguments, none tested: daily reporting is already part of a good attendant's job and
+is currently done verbally from memory; "could not do it" gives them a legitimate way to say
+something was impossible, which today is their word against the family's; and the record is
+evidence of work done, which nothing in this market currently gives them. **UNVALIDATED —
+this is experiment E1, the highest-risk test in the plan.** If it fails, the product needs a
+different data source, which is a different product.
+
+**10. What prevents fake logging?**
+Partly nothing, and the product says so. What exists: shift boundaries, per-entry
+timestamps, attribution to a named person, and an append-only revision trail so an entry
+cannot be quietly rewritten. What is measured: burst logging (everything entered in the five
+minutes before close) and late-entry clustering, both as guardrails that can stop the
+roadmap. What is *not* claimed: verification — which is exactly why the north-star metric
+was renamed from "verified" to "documented" (D-18). Stronger proof mechanisms — photos,
+geofencing — mostly convert the product into surveillance and would break the data source.
+
+**11. What happens when a caregiver doesn't show?**
+A watch alert fires when no shift has started by 08:00 or 20:00 IST, and the family sees
+"nobody has started the day shift" on their home screen. **The honest limitation:** that
+check runs when a family member opens the app, not on a scheduler, and the WhatsApp delivery
+that would push it is stubbed. So today the product tells a family who looks. That is a real
+hole in the core promise, it is documented in the product itself, and it is the first thing
+to build after validation.
+
+**12. What is actually verified?**
+Nothing. That is the point of D-18. What is *documented* is: who was on duty, when they
+started and closed, what they recorded against a plan the family wrote, what they said when
+something could not be done, and every correction they made. Attribution and an audit trail,
+not verification.
+
+**13. What's the moat?**
+At this stage: none worth the word. What exists is a compounding asset (the record's value
+grows with every day logged and every attendant change survived, and switching means
+retyping the discharge sheet), a structural conflict that makes incumbents bad at this, and
+an operating model that does not require capital they have already proven willing to burn.
+Anyone claiming a moat on an unlaunched product with no users is selling something.
+
+**14. What would kill the product?**
+In order: attendants not logging (E1); families not paying unbundled while a free
+alternative exists (E2); an incumbent bundling a good-enough version into an existing
+relationship — Antara already sells to exactly this beachhead with a hospital brand behind
+it; and a safety incident where a family relied on an alert that never arrived because
+delivery is stubbed. The last is the reason the stub is displayed in the product rather
+than hidden.
+
+**15. What evidence is missing?**
+All of the primary evidence. No interviews, no pilot, no usage, no willingness-to-pay
+signal, no test of whether the handover pack changes anything. Thirteen load-bearing claims
+are graded in doc 00; three are hypotheses the product rests on and one is an assumption
+about attendants that could invalidate the data source. The interview guides are written
+(doc 19) and unused. **Six weeks of conversations would be worth more than six weeks of
+features, which is why the build stopped.**
+
+---
+
 ## The one-line version
 
 > The research said the problem was not finding a caregiver — it was knowing what the

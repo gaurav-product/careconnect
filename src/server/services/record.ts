@@ -1,5 +1,6 @@
 import { getDb } from '../db.js';
 import { addDays, dayNumber, istDate, parseJson, slotForTime, toBool } from '../util.js';
+import { revisionsForDay } from './revisions.js';
 import type {
   Alert,
   CarePlan,
@@ -113,6 +114,8 @@ export function getDayRecord(planId: string, date: string): DayRecord | null {
     )
     .all(planId, date) as Alert[];
 
+  const revisions = revisionsForDay(planId, date);
+
   const medRows: DayRecord['meds'] = [];
   for (const m of medications) {
     for (const t of m.times) {
@@ -170,15 +173,20 @@ export function getDayRecord(planId: string, date: string): DayRecord | null {
     vitals,
     observations,
     alerts,
+    revisions,
     score: { logged, expected, missed_critical: missedCritical }
   };
 }
 
 /**
- * North-star input: a day counts as "verified" when every critical item was recorded,
+ * North-star input: a day counts as DOCUMENTED when every critical item was recorded,
  * at least 80% of all expected items were recorded, and no urgent alert is still open.
+ *
+ * Deliberately not called "verified". CareConnect cannot verify that care happened —
+ * it records what a person on the scene typed, at a time, under their name, with
+ * corrections kept. That is documentation, not verification. See docs/13-metrics.md.
  */
-export function isVerifiedCareDay(day: DayRecord): boolean {
+export function isDocumentedCareDay(day: DayRecord): boolean {
   if (day.score.expected === 0) return false;
   if (day.score.missed_critical > 0) return false;
   const criticalPending = day.meds.some((m) => m.critical && m.status === 'pending') ||
@@ -272,7 +280,7 @@ export function buildHandover(planId: string) {
       logged: d.score.logged,
       expected: d.score.expected,
       missed_critical: d.score.missed_critical,
-      verified: isVerifiedCareDay(d)
+      documented: isDocumentedCareDay(d)
     })),
     recent_problems: trouble
   };

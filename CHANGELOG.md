@@ -3,6 +3,80 @@
 All notable changes to CareConnect. This is a portfolio project, so entries record
 *product* decisions alongside code.
 
+## [0.2.0] — 2026-09-02
+
+An audit, honesty and integrity pass. **No new features.** Everything below came out of
+auditing what was already there.
+
+### Fixed — record integrity
+- **Care entries could be silently rewritten.** Task and dose logs were an upsert with no
+  history: an attendant could record *"missed — strip finished"* and change it to *"given"*
+  before closing the shift, invisibly. In a product whose only asset is the record, that
+  made the record unfalsifiable. Entries are now append-only — every change writes the
+  previous status, previous reason, time and author to `care_log_revisions`, and the
+  family's day record renders *previous → new*. Re-submitting an identical value writes no
+  revision, so a double tap on a slow connection is not logged as a correction. (D-17)
+
+### Changed — the north-star metric now says what it means
+- **"Verified care days" → "documented care days"**, across the code, the API, the interface
+  and every document. CareConnect cannot confirm that a tablet was swallowed; it records what
+  one person entered, at a time, under their name, with corrections kept. The Insights screen
+  explains the difference to the family, and the docs state what would let us honestly use
+  "verified" later — a second independent signal for the same event. (D-18)
+
+### Fixed — accessibility, measured rather than asserted
+- Added `npm run audit:a11y`: drives seven signed-in pages and checks contrast against the
+  background actually painted behind every text node, plus touch targets (44px on a phone,
+  WCAG 2.1 AA's 24px on pointer screens), labelled controls, alt text, heading structure and
+  landmarks.
+- **145 issues on the first run, 0 after fixes.** The largest cluster was secondary text at
+  4.40:1 — which carried every Hindi sub-label on the attendant screen. Secondary text
+  `#6B7C76 → #5C6C66`; warning text `#9A6B08 → #8C6105`; minimum control heights 40/44/56px;
+  a real `<h1>` on the duty screen; a `<main>` landmark on the auth screens. (D-21)
+
+### Added — for the attendant
+- A persistent, bilingual "your last entry did not save" banner replacing a 4.5-second toast.
+  On a patchy connection the attendant looks away, the toast dies, and they believe it saved.
+  (D-20)
+- A permanent statement of **what the family can see** — what you record, the time, your name;
+  no location, no camera, no microphone — with links to the full care plan and handover, so
+  nothing about the patient is withheld from them either. There is no secret file about a
+  worker in this product. (D-19)
+
+### Changed — evidence and claims
+- Added a **claim register** to `docs/00-evidence-index.md` grading all 13 load-bearing
+  conclusions, and downgraded three that were stated more strongly than their evidence:
+  *"every well-funded attempt failed"* → an INFERENCE from four unverified cases; *"the only
+  player"* → an OBSERVATION from a desk review, not a census; *"no family described being
+  unable to find an attendant"* → absence of evidence, with the scope narrowed to metro
+  paying families and a falsifier written in. (D-22)
+- Refreshed the competitive analysis with HCAH's published shift structure, ₹1,000/day entry
+  price, verification claims and 24-hour replacement promise, and with Antara Senior Care —
+  a Max-group player already selling to exactly this beachhead. Added a "why they win"
+  analysis in place of a feature grid.
+- Recorded that **CareStride and Health24**, named in the brief, did not surface in desk
+  research at all — rather than padding the analysis with a guess.
+
+### Added — documentation
+- `docs/19-validation-plan.md`: family, attendant and hospital/agency interview guides
+  written around past behaviour; an observation protocol with explicit no-coaching rules;
+  research consent and privacy guidance that collects no clinical detail; three experiment
+  designs with **pre-registered thresholds labelled as proposed, not results**; and an
+  experiment tracker where every row currently reads *Not started · Inconclusive*.
+- `docs/portfolio-review.md`: the project scored 1–10 across 13 dimensions as a hiring
+  manager would, with the five questions an interviewer would ask and the answers to give.
+- `docs/linkedin-carousel.md`: an 11-slide carousel outline with visuals and source
+  references per slide.
+- `docs/18-learnings.md` now answers 15 skeptical-interviewer questions, marking the weak
+  answers UNVALIDATED rather than dressing them up.
+- `docs/08-product-strategy.md` now scores five candidate payers — family, agency, hospital,
+  employer, insurer — and names the employer benefit as the fallback if families will not
+  pay unbundled.
+
+### Testing
+- 60 → **65** unit and integration tests; 24 → **30** end-to-end journeys; plus the
+  accessibility sweep. All passing.
+
 ## [0.1.0] — 2026-09-01
 
 The first complete MVP: research, strategy, design, build, QA and documentation.

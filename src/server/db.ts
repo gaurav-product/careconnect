@@ -199,6 +199,26 @@ CREATE TABLE IF NOT EXISTS handovers (
 );
 CREATE INDEX IF NOT EXISTS idx_handovers_plan ON handovers(plan_id);
 
+-- A care entry can be corrected during the shift, but the earlier value is never
+-- lost: every change appends a row here. The family's day record shows corrections
+-- inline, so the record cannot be quietly cleaned up before the shift closes.
+CREATE TABLE IF NOT EXISTS care_log_revisions (
+  id TEXT PRIMARY KEY,
+  plan_id TEXT NOT NULL REFERENCES care_plans(id) ON DELETE CASCADE,
+  shift_id TEXT,
+  date TEXT NOT NULL,
+  entry_type TEXT NOT NULL CHECK (entry_type IN ('task','medication')),
+  entry_ref TEXT NOT NULL,
+  label TEXT NOT NULL,
+  previous_status TEXT NOT NULL,
+  previous_reason TEXT,
+  new_status TEXT NOT NULL,
+  new_reason TEXT,
+  changed_at TEXT NOT NULL,
+  changed_by TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_revisions_plan_date ON care_log_revisions(plan_id, date);
+
 -- Every alert also produces the message that WOULD be pushed to the family.
 -- Actual WhatsApp/SMS delivery is not connected in this prototype; the outbox makes
 -- the gap visible instead of pretending the message was sent. See docs/16.

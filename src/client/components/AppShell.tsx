@@ -49,7 +49,7 @@ export function AppShell({
                   await signOut();
                   navigate('/login');
                 }}
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-muted hover:bg-sand-100"
+                className="min-h-[40px] rounded-lg px-3 py-2 text-sm font-medium text-ink-muted hover:bg-sand-100"
               >
                 Sign out
               </button>
@@ -88,13 +88,13 @@ export function AppShell({
 export function AuthShell({ children, lede }: { children: React.ReactNode; lede?: string }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-leaf-50 to-sand-50">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-10">
+      <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-10">
         <Link to="/" className="mb-6 inline-flex">
           <Logo />
         </Link>
         {lede && <p className="mb-6 text-[15px] leading-relaxed text-ink-muted">{lede}</p>}
         {children}
-      </div>
+      </main>
     </div>
   );
 }

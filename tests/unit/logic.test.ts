@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { addDays, dayNumber, istDate, istTime, slotForTime } from '../../src/server/util.js';
 import { isOutOfRange, severityForVital, URGENT_BANDS } from '../../src/server/services/alerts.js';
-import { isVerifiedCareDay, slotForWindow } from '../../src/server/services/record.js';
+import { isDocumentedCareDay, slotForWindow } from '../../src/server/services/record.js';
 import type { DayRecord } from '../../src/shared/types.js';
 
 describe('Indian time handling', () => {
@@ -64,7 +64,7 @@ describe('vital thresholds', () => {
   });
 });
 
-describe('the verified care day definition', () => {
+describe('the documented care day definition', () => {
   const base = (over: Partial<DayRecord> = {}): DayRecord => ({
     date: '2026-09-01',
     day_number: 9,
@@ -79,26 +79,27 @@ describe('the verified care day definition', () => {
     vitals: [],
     observations: [],
     alerts: [],
+    revisions: [],
     score: { logged: 3, expected: 3, missed_critical: 0 },
     ...over
   });
 
   it('counts a complete day with nothing outstanding', () => {
-    expect(isVerifiedCareDay(base())).toBe(true);
+    expect(isDocumentedCareDay(base())).toBe(true);
   });
 
   it('does not count a day where a must-not-miss item was missed', () => {
     const day = base();
     day.meds[0].status = 'missed';
     day.score.missed_critical = 1;
-    expect(isVerifiedCareDay(day)).toBe(false);
+    expect(isDocumentedCareDay(day)).toBe(false);
   });
 
   it('does not count a day where a critical item was never recorded at all', () => {
     const day = base();
     day.tasks[0].status = 'pending';
     day.score.logged = 2;
-    expect(isVerifiedCareDay(day)).toBe(false);
+    expect(isDocumentedCareDay(day)).toBe(false);
   });
 
   it('does not count a day with an urgent alert left open', () => {
@@ -111,7 +112,7 @@ describe('the verified care day definition', () => {
         }
       ]
     });
-    expect(isVerifiedCareDay(day)).toBe(false);
+    expect(isDocumentedCareDay(day)).toBe(false);
   });
 
   it('still counts a day where an urgent alert was dealt with', () => {
@@ -124,17 +125,17 @@ describe('the verified care day definition', () => {
         }
       ]
     });
-    expect(isVerifiedCareDay(day)).toBe(true);
+    expect(isDocumentedCareDay(day)).toBe(true);
   });
 
   it('needs at least 80% of the day recorded', () => {
     const day = base();
     day.tasks[1].status = 'pending';
     day.score = { logged: 2, expected: 3, missed_critical: 0 };
-    expect(isVerifiedCareDay(day)).toBe(false);
+    expect(isDocumentedCareDay(day)).toBe(false);
   });
 
-  it('never counts a day with nothing expected as verified', () => {
-    expect(isVerifiedCareDay(base({ meds: [], tasks: [], score: { logged: 0, expected: 0, missed_critical: 0 } }))).toBe(false);
+  it('never counts a day with nothing expected as documented', () => {
+    expect(isDocumentedCareDay(base({ meds: [], tasks: [], score: { logged: 0, expected: 0, missed_critical: 0 } }))).toBe(false);
   });
 });

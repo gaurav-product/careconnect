@@ -28,7 +28,7 @@ const statusLabel: Record<string, string> = {
 
 export default function DayRecordPage() {
   const { planId = '', date = '' } = useParams();
-  const { data, loading, error, reload } = useApi<DayRecord & { verified: boolean }>(`/plans/${planId}/days/${date}`);
+  const { data, loading, error, reload } = useApi<DayRecord & { documented: boolean }>(`/plans/${planId}/days/${date}`);
 
   if (loading) return <AppShell nav={planNav(planId)}><Loading /></AppShell>;
   if (error || !data)
@@ -49,8 +49,8 @@ export default function DayRecordPage() {
             Day {data.day_number} · {dateLabel(data.date)}
           </h1>
         </div>
-        <Badge tone={data.verified ? 'good' : data.score.missed_critical ? 'alert' : 'neutral'}>
-          {data.verified ? 'Verified day' : data.score.missed_critical ? 'Important item missed' : 'Incomplete record'}
+        <Badge tone={data.documented ? 'good' : data.score.missed_critical ? 'alert' : 'neutral'}>
+          {data.documented ? 'Fully documented' : data.score.missed_critical ? 'Important item missed' : 'Incomplete record'}
         </Badge>
       </div>
 
@@ -135,6 +135,40 @@ export default function DayRecordPage() {
                   {v.value2 ? `/${readingValue(v.value2)}` : ''} <span className="text-sm font-normal text-ink-soft">{VITAL_META[v.type]?.unit}</span>
                 </p>
                 <p className="text-xs text-ink-soft">{clockTime(v.logged_at)}</p>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      {data.revisions.length > 0 && (
+        <Card className="mb-4">
+          <SectionTitle>Corrections during the day</SectionTitle>
+          <p className="mb-3 text-sm text-ink-soft">
+            An entry can be changed while the shift is open — a wrong button, or a dose given later than planned.
+            The earlier value is kept, so the record cannot be tidied up after the fact.
+          </p>
+          <ul className="space-y-2">
+            {data.revisions.map((r) => (
+              <li key={r.id} className="rounded-xl border border-sand-200 p-3 text-sm">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <span className="font-medium">{r.label}</span>
+                  <span className="text-xs text-ink-soft">
+                    {clockTime(r.changed_at)}
+                    {r.changed_by_name && ` · ${r.changed_by_name}`}
+                  </span>
+                </div>
+                <p className="mt-1 text-ink-muted">
+                  <span className="line-through decoration-alert-500">
+                    {statusLabel[r.previous_status] ?? r.previous_status}
+                    {r.previous_reason && ` — “${r.previous_reason}”`}
+                  </span>
+                  <span aria-hidden="true"> → </span>
+                  <span className="font-medium text-ink">
+                    {statusLabel[r.new_status] ?? r.new_status}
+                    {r.new_reason && ` — “${r.new_reason}”`}
+                  </span>
+                </p>
               </li>
             ))}
           </ul>

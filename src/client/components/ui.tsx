@@ -27,7 +27,11 @@ export function Button({
     ghost: 'text-leaf-600 hover:bg-leaf-50',
     danger: 'bg-alert-500 text-white hover:bg-alert-600'
   } as const;
-  const sizes = { sm: 'px-3 py-2 text-sm', md: 'px-4 py-2.5 text-[15px]', lg: 'px-5 py-4 text-lg' } as const;
+  const sizes = {
+    sm: 'px-3 py-2 text-sm min-h-[40px]',
+    md: 'px-4 py-2.5 text-[15px] min-h-[44px]',
+    lg: 'px-5 py-4 text-lg min-h-[56px]'
+  } as const;
   return (
     <button
       className={`${base} ${variants[variant]} ${sizes[size]} ${block ? 'w-full' : ''} ${className}`}

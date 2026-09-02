@@ -51,6 +51,17 @@ async function main() {
   await fam.waitForLoadState('networkidle');
   await shot(fam, '03-day-record', true);
 
+  // The day that carries a correction — the record's integrity story.
+  await fam.goto(`${BASE}/plans`);
+  await fam.getByRole('link', { name: /Ramesh Iyer/ }).click();
+  await fam.waitForLoadState('networkidle');
+  const correctedDay = fam.getByRole('link', { name: /Day 7:/ });
+  if (await correctedDay.count()) {
+    await correctedDay.click();
+    await fam.waitForLoadState('networkidle');
+    await shot(fam, '11-corrections', true);
+  }
+
   await fam.getByRole('link', { name: 'Handover pack' }).click();
   await fam.waitForLoadState('networkidle');
   await shot(fam, '04-handover-pack', true);
