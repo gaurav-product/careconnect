@@ -21,6 +21,16 @@ export default defineConfig({
       use: { ...devices['Pixel 7'], launchOptions: { executablePath: process.env.CHROMIUM_PATH || undefined } }
     },
     {
+      name: 'tablet',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 820, height: 1180 },
+        isMobile: false,
+        hasTouch: true,
+        launchOptions: { executablePath: process.env.CHROMIUM_PATH || undefined }
+      }
+    },
+    {
       name: 'desktop',
       use: {
         ...devices['Desktop Chrome'],

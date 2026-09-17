@@ -369,3 +369,72 @@ already there.
   supply has repeatedly proved capital-hungry, so a one-person project should not start
   there", which is defensible. Overstating it would hand an interviewer a free hit on the
   one thing this project is selling: that the reasoning can be trusted.
+
+
+---
+
+# Iteration 3 — MVP scope and validation readiness
+
+---
+
+### D-23 ↺ REVERSAL · Split the north star into "documented" and "complete" days
+
+- **Date** Iteration 3, from re-reading the MVP objective.
+- **Problem** The north star required a near-perfect day: every critical item recorded, ≥80%
+  of the day recorded, no urgent alert open. But the MVP exists to answer *"will they keep a
+  shared record at all?"* — and that metric would score a household that recorded something
+  every day for two weeks, with a few honest misses, as an almost total failure.
+- **Options** (a) keep the strict definition; (b) lower it to "≥1 care record for the day";
+  (c) measure both, separately.
+- **Evidence** No new external evidence — this is a definitional error caught by comparing
+  the metric against the question it is supposed to answer. The first risk in this product
+  is abandonment, not imperfection, and the metric was pointed at the wrong one.
+- **Trade-off** A low bar looks unimpressive and can be gamed by a single entry a day. The
+  guardrails (burst logging, attendant time, late-entry clustering) are what stop that, and
+  "complete care days" now carries the quality signal that was lost.
+- **Decision** (c). **Documented care days** is the north star; **complete care days** is
+  the quality measure. The family's week strip went from two states to three — grey for
+  nothing recorded, amber for recorded-with-something-important-missed, green for complete —
+  because the amber case is the most actionable one and the old binary hid it.
+- **Result** Implemented across the API, the interface and the docs, with unit tests for
+  both definitions.
+- **Revisit if** the pilot shows households hitting "documented" every day with a single
+  token entry. That would mean the low bar is being gamed and the guardrails are not
+  catching it.
+
+---
+
+### D-24 · Corrections do not ask the attendant "why"
+
+- **Date** Iteration 3, from re-reading the data-model spec.
+- **Problem** The revision model could carry an explicit *reason for the correction*,
+  separate from the entry's own reason. Should changing an entry prompt for one?
+- **Options** (a) require a reason on every correction; (b) optional field; (c) none — rely
+  on the previous and new reason already stored.
+- **Trade-off** (a) gives the cleanest audit trail and taxes the one user who has no stake
+  in the product. The attendant is already the constrained user — a cheap phone, one hand
+  free, five minutes total — and a correction is most often a mis-tap on a small screen.
+  Charging them a paragraph for fixing a mis-tap trains them not to fix it, which is worse
+  for the record than the missing metadata.
+- **Decision** (c). The revision already stores the previous status **and its reason**
+  alongside the new status and its reason, with the time and the author. For a
+  status-changing correction the entry's own required reason supplies the explanation.
+- **Reason** The audit need is met without adding friction to the data source the whole
+  product depends on. **Revisit if** the pilot shows corrections that a family cannot make
+  sense of from the previous/new pair alone.
+
+---
+
+### D-25 · Documentation reorganised, not expanded
+
+- **Date** Iteration 3.
+- **Problem** 24 flat numbered files in one folder reads as heavy, and a hiring manager
+  opening the repo cannot tell where to start.
+- **Options** (a) leave it; (b) delete the research docs to look leaner; (c) group into
+  folders with an index.
+- **Decision** (c). `research/`, `product/`, `decisions/`, `metrics/`, `validation/`,
+  `engineering/`, `portfolio/`, with `docs/README.md` as the front door. **No document was
+  deleted and no new analysis was written** — the only additions are the three operational
+  pilot files, which are instruments rather than analysis.
+- **Reason** (b) was tempting and wrong: the research *is* the case study's evidence base.
+  The problem was navigability, not volume.

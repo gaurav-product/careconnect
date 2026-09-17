@@ -9,6 +9,8 @@ interface Metrics {
   days_elapsed: number;
   documented_care_days: number;
   documented_rate: number;
+  complete_care_days: number;
+  complete_rate: number;
   logging_completeness: number;
   missed_critical_items: number;
   shifts_started: number;
@@ -18,7 +20,14 @@ interface Metrics {
   alerts_open: number;
   urgent_alerts: number;
   median_minutes_to_acknowledge: number | null;
-  trend: Array<{ date: string; day_number: number; logged: number; expected: number; documented: boolean }>;
+  trend: Array<{
+    date: string;
+    day_number: number;
+    logged: number;
+    expected: number;
+    documented: boolean;
+    complete: boolean;
+  }>;
 }
 
 function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
@@ -71,8 +80,12 @@ export default function InsightsPage() {
       <Card className="mb-4">
         <SectionTitle>North star — documented care days</SectionTitle>
         <p className="mb-3 text-sm text-ink-muted">
-          A day counts once every must-not-miss medicine and task was recorded, at least 80% of the day's items were
-          recorded, and no urgent alert was left open overnight.
+          A day counts when <strong>at least one care record exists for it</strong> — a task, a dose, a reading or an
+          observation, entered by an identified user.
+        </p>
+        <p className="mb-3 text-sm text-ink-muted">
+          It is deliberately a low bar. What CareConnect is testing first is whether a family and an attendant will keep
+          a shared record at all. How <em>complete</em> that record is comes next, and is measured separately below.
         </p>
         <p className="mb-4 rounded-xl border border-sand-200 bg-sand-50 px-3 py-2 text-sm text-ink-muted">
           <strong className="text-ink">Why &ldquo;documented&rdquo; and not &ldquo;verified&rdquo;:</strong> CareConnect
@@ -81,9 +94,9 @@ export default function InsightsPage() {
           the product can do.
         </p>
         <div className="grid gap-3 sm:grid-cols-3">
-          <Stat label="Fully documented days" value={`${data.documented_care_days} of ${data.days_elapsed}`} sub={pct(data.documented_rate)} />
-          <Stat label="Record completeness" value={pct(data.logging_completeness)} sub="items recorded ÷ items expected" />
-          <Stat label="Missed critical items" value={String(data.missed_critical_items)} sub="lower is better" />
+          <Stat label="Documented care days" value={`${data.documented_care_days} of ${data.days_elapsed}`} sub={`${pct(data.documented_rate)} of days have a record`} />
+          <Stat label="Complete days" value={`${data.complete_care_days} of ${data.days_elapsed}`} sub="nothing important missed" />
+          <Stat label="Items recorded" value={pct(data.logging_completeness)} sub="recorded ÷ expected" />
         </div>
         <div className="mt-4 text-leaf-500">
           <Sparkline points={data.trend.map((t) => (t.expected ? t.logged / t.expected : 0))} />
@@ -151,6 +164,7 @@ export default function InsightsPage() {
                 <th scope="col" className="py-2 pr-4 font-medium">Date</th>
                 <th scope="col" className="py-2 pr-4 font-medium">Recorded</th>
                 <th scope="col" className="py-2 font-medium">Documented</th>
+                <th scope="col" className="py-2 font-medium">Complete</th>
               </tr>
             </thead>
             <tbody>
@@ -162,6 +176,7 @@ export default function InsightsPage() {
                     {t.logged}/{t.expected}
                   </td>
                   <td className="py-2">{t.documented ? 'Yes' : 'No'}</td>
+                  <td className="py-2">{t.complete ? 'Yes' : 'No'}</td>
                 </tr>
               ))}
             </tbody>

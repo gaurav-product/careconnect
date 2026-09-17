@@ -61,7 +61,7 @@
 - **Claim nothing about traction.** There are no users, no revenue, no retention data. The
   post's credibility rests on the reversal and the honesty, not on numbers.
 - If someone asks "did you talk to users?", the answer is: no, secondary research only, and
-  the interview guides are in `docs/19-validation-plan.md`. Say it before they ask — it
+  the interview guides are in `docs/validation/19-validation-plan.md`. Say it before they ask — it
   converts the biggest weakness into evidence of judgment.
 - If it needs to be shorter, cut the metric-rename paragraph and keep the audit-trail one;
   the concrete defect lands harder with a general audience than the vocabulary argument.

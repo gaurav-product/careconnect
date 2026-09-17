@@ -1,15 +1,31 @@
 # 17 · Testing
 
-**Status: 65 unit and integration tests + 30 end-to-end journeys (15 scenarios × mobile and
-desktop) + a mechanical accessibility sweep of 7 signed-in pages. All passing. No console
-or page errors on any screen; 0 accessibility issues.**
+**Status: 70 unit and integration tests + 51 end-to-end journeys (17 scenarios × mobile,
+tablet and desktop) + a mechanical accessibility sweep of 7 signed-in pages. All passing.
+No console or page errors on any screen; 0 accessibility issues.**
 
 ```
-npm test            # 65 tests, ~6s
-npm run test:e2e    # 30 journeys across Pixel-7 and desktop viewports
+npm test            # 70 tests, ~5s
+npm run test:e2e    # 51 journeys across phone (Pixel 7), tablet (820×1180) and desktop
 npm run audit:a11y  # contrast, touch targets, labels, headings, landmarks
 npm run shots       # captures the screenshots and fails on any console error
 ```
+
+Every workflow in the MVP definition of done has an end-to-end test behind it:
+
+| Required workflow | Covered by |
+| --- | --- |
+| Family creates a care case and a care plan | "full journey from discharge to a resolved alert" |
+| Attendant joins with a code | same, plus the handover journey |
+| Attendant records a completed task | same |
+| Attendant records an incomplete task **without** a reason → blocked | same |
+| Attendant records it **with** a reason → accepted | same |
+| Attendant reports a problem | same |
+| Family sees the record and the alert | same |
+| Attendant submits a handover | "a replacement attendant sees the previous attendant's handover" |
+| The next attendant sees it on their first screen | same |
+| A correction creates a revision instead of an overwrite | "a correction keeps the earlier value" |
+| An unauthorised user cannot open another case | "a family cannot open another family's care case" |
 
 ## What is tested, and why that
 
@@ -24,7 +40,8 @@ date arithmetic that decides which day a night-shift entry belongs to.
 | IST day boundaries | 20:00 UTC is already tomorrow in IST; discharge day is day 1; adding days across a month end |
 | Shift slots | 07:00 and 18:59 are day; 19:00 and 03:00 are night; every task window maps to exactly one shift |
 | Vital thresholds | Outside the family's band; hard clinical bands escalating even with no band set; both blood-pressure numbers checked |
-| Documented care day | Complete day passes; missed critical fails; unrecorded critical fails; open urgent alert fails; resolved urgent alert passes; below the 80% floor fails; an empty day never counts |
+| Documented care day (north star) | Any single record counts the day — a task, a dose, a reading or an observation; a day with nothing recorded does not; an imperfect day with honest misses still counts |
+| Complete care day (quality) | Complete day passes; missed critical fails; unrecorded critical fails; open urgent alert fails; resolved urgent alert passes; below the 80% floor fails; an empty day never counts |
 | Display formatting | IST dates render on the right day; dose times read as "9:00 pm"; readings never show `98.39999999999999` |
 
 ### Integration — the API against a real database (`tests/server`)
@@ -112,6 +129,16 @@ and failing on any console or page error.
 | Buttons that do nothing | None. Every control performs a real action or is absent |
 
 ## Defects found and fixed
+
+### Iteration 3
+
+| # | Severity | Found by | Defect | Fix |
+| --- | --- | --- | --- | --- |
+| 18 | **P1** | Re-reading the MVP objective | The north star required a near-perfect day, so a household recording every day with a few honest misses scored as a failure — the metric was pointed at imperfection when the first risk is abandonment | Split into documented (north star) and complete (quality) care days; three-state week strip (D-23) |
+| 19 | **P1** | E2E authoring | **A new test mutated shared demo data** — ending the seeded attendant broke three later tests in other viewport projects. A test suite that only passes in one order is not a test suite | The handover journey now builds its own family, plan and two attendants |
+| 20 | **P2** | Spec review | No end-to-end coverage that one family cannot open another's care case, despite it being enforced server-side | Added, across all three viewports |
+| 21 | **P2** | Spec review | Tablet viewport never tested | Added a third Playwright project at 820×1180 |
+| 22 | **P2** | Spec review | Adding a medicine or task showed failures only in a toast that disappears | Persistent "Not saved — …" banner inside both sheets |
 
 ### Iteration 2
 

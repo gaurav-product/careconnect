@@ -179,17 +179,37 @@ export function getDayRecord(planId: string, date: string): DayRecord | null {
 }
 
 /**
- * North-star input: a day counts as DOCUMENTED when every critical item was recorded,
- * at least 80% of all expected items were recorded, and no urgent alert is still open.
+ * North star: a day is DOCUMENTED when at least one care record exists for it —
+ * a task, a dose, a reading or an observation, entered by an identified user.
  *
  * Deliberately not called "verified". CareConnect cannot verify that care happened —
  * it records what a person on the scene typed, at a time, under their name, with
- * corrections kept. That is documentation, not verification. See docs/13-metrics.md.
+ * corrections kept. That is documentation, not verification.
+ *
+ * Deliberately a LOW bar, too. The MVP is testing whether families and attendants will
+ * actually keep a shared record at all; a metric that only counts perfect days would
+ * answer a question nobody is asking yet. Completeness is measured separately below.
+ * See docs/metrics/13-metrics.md.
  */
 export function isDocumentedCareDay(day: DayRecord): boolean {
+  return day.score.logged > 0 || day.vitals.length > 0 || day.observations.length > 0;
+}
+
+/**
+ * A stricter, secondary measure of the record's COMPLETENESS: every must-not-miss item
+ * recorded, at least 80% of the day's expected items recorded, and no urgent alert left
+ * open. This is a quality metric, not the north star — the north star asks whether the
+ * record exists at all, because that is what the MVP experiment is testing.
+ *
+ * The 80% floor is deliberate. Real care is not complete: a patient refuses a bath, a
+ * physio set is skipped because the leg hurts. Demanding 100% would punish honest
+ * recording and push attendants to tick everything.
+ */
+export function isCompleteCareDay(day: DayRecord): boolean {
   if (day.score.expected === 0) return false;
   if (day.score.missed_critical > 0) return false;
-  const criticalPending = day.meds.some((m) => m.critical && m.status === 'pending') ||
+  const criticalPending =
+    day.meds.some((m) => m.critical && m.status === 'pending') ||
     day.tasks.some((t) => t.critical && t.status === 'pending');
   if (criticalPending) return false;
   const openUrgent = day.alerts.some((a) => a.severity === 'urgent' && a.status !== 'resolved');
@@ -280,7 +300,8 @@ export function buildHandover(planId: string) {
       logged: d.score.logged,
       expected: d.score.expected,
       missed_critical: d.score.missed_critical,
-      documented: isDocumentedCareDay(d)
+      documented: isDocumentedCareDay(d),
+      complete: isCompleteCareDay(d)
     })),
     recent_problems: trouble
   };

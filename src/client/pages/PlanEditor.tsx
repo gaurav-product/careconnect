@@ -26,6 +26,7 @@ export default function PlanEditor() {
   const [addingTask, setAddingTask] = useState(false);
   const [busy, setBusy] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [med, setMed] = useState({ name: '', dose: '', times: ['09:00'], instruction: '', critical: false });
   const [task, setTask] = useState({ title_en: '', title_hi: '', window: 'morning', critical: false });
 
@@ -34,6 +35,7 @@ export default function PlanEditor() {
   async function saveMed() {
     setBusy(true);
     setFieldErrors({});
+    setSaveError(null);
     try {
       await api.post(`/plans/${planId}/medications`, { ...med, instruction: med.instruction || null });
       notify('Medicine added to the plan.');
@@ -43,6 +45,7 @@ export default function PlanEditor() {
     } catch (e) {
       const err = e as RequestError;
       setFieldErrors(err.details || {});
+      setSaveError(err.message);
       notify(err.message, 'alert');
     } finally {
       setBusy(false);
@@ -52,6 +55,7 @@ export default function PlanEditor() {
   async function saveTask() {
     setBusy(true);
     setFieldErrors({});
+    setSaveError(null);
     try {
       await api.post(`/plans/${planId}/tasks`, { ...task, title_hi: task.title_hi || undefined, category: 'other' });
       notify('Task added to the daily routine.');
@@ -61,6 +65,7 @@ export default function PlanEditor() {
     } catch (e) {
       const err = e as RequestError;
       setFieldErrors(err.details || {});
+      setSaveError(err.message);
       notify(err.message, 'alert');
     } finally {
       setBusy(false);
@@ -227,6 +232,11 @@ export default function PlanEditor() {
             />
             Must not be missed
           </label>
+          {saveError && (
+            <p className="rounded-lg bg-alert-50 px-3 py-2 text-sm text-alert-600" role="alert">
+              Not saved — {saveError}
+            </p>
+          )}
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setAddingMed(false)}>Cancel</Button>
             <Button onClick={saveMed} loading={busy} disabled={!med.name.trim() || !med.dose.trim()}>
@@ -264,6 +274,11 @@ export default function PlanEditor() {
             />
             Important — alert me if it is missed
           </label>
+          {saveError && (
+            <p className="rounded-lg bg-alert-50 px-3 py-2 text-sm text-alert-600" role="alert">
+              Not saved — {saveError}
+            </p>
+          )}
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setAddingTask(false)}>Cancel</Button>
             <Button onClick={saveTask} loading={busy} disabled={task.title_en.trim().length < 2}>

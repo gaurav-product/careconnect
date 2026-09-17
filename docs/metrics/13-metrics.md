@@ -36,12 +36,36 @@ The distinction matters for three reasons:
 same event — a family or nurse confirmation, a connected BP monitor writing its own reading,
 a pharmacy dispensing record. Until such a signal exists, the metric stays "documented".
 
-A day is **fully documented** when all three hold:
+A day is **documented** when **at least one care record exists for it** — a task, a dose, a
+reading or an observation, entered by an identified user on a shift they had to start.
 
-1. Every must-not-miss medicine and every important task for that day was recorded — none
-   left blank, none missed.
-2. At least 80% of everything expected that day was recorded.
-3. No urgent alert from that day was left open.
+### Why the bar is deliberately low ↺
+
+The first version of this metric required a *perfect* day: every must-not-miss item
+recorded, ≥80% of the day recorded, no urgent alert left open. That is a good definition of
+a **complete** day, and it was the wrong north star for this stage.
+
+The MVP is testing one thing: **will a family and an attendant keep a shared record at
+all?** A metric that only counts flawless days answers a question nobody is asking yet — and
+it would report a household that recorded something every single day for two weeks, with a
+few honest misses, as a near-total failure. That is exactly backwards for a product whose
+first risk is abandonment, not imperfection.
+
+So the two are now measured separately:
+
+| Metric | Definition | What it tells you |
+| --- | --- | --- |
+| **Documented care days** *(north star)* | ≥1 care record exists for the day | Is the habit forming? Is the record being kept at all? |
+| **Complete care days** *(quality)* | Every must-not-miss item recorded, ≥80% of the day recorded, no urgent alert left open | How good is the record when it is kept? |
+
+Both appear in the product. The family's week strip shows three states — grey for nothing
+recorded, amber for recorded-but-something-important-missed, green for complete — because
+that is the distinction a family actually cares about, and collapsing it into two states
+hides the most actionable case.
+
+**The 80% floor inside "complete" stays deliberate.** Real care is not complete: a patient
+refuses a bath, a physio set is skipped because the leg hurts. Demanding 100% would punish
+honest recording and push attendants to tick everything.
 
 ### Why this one
 
@@ -61,8 +85,11 @@ because the leg hurts. Demanding 100% would either punish honest recording or pu
 attendants to tick everything, destroying the data. The critical items are the hard gate;
 the rest is a completeness floor.
 
-**Target:** ≥ 5 fully documented days in every 7, from day 3 of an episode onward. **Not yet
-validated.**
+**Targets, both NOT YET VALIDATED:** ≥ 6 documented days in every 7 from day 3 onward, and
+≥ 4 of those also complete. The first is the adoption question; the second is the quality
+question. Missing the first means the product is being abandoned; missing only the second
+means it is being used and care is imperfect, which is a different problem with a different
+fix.
 
 ## Activation
 

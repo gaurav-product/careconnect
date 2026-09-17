@@ -36,7 +36,7 @@ So I went looking for families who could not find a caregiver.
 **Method, stated first because it is the biggest limitation:** secondary research only —
 government releases, peer-reviewed studies, market research, provider documentation,
 complaint boards. **No interviews.** Every source is graded A–D in
-`docs/00-evidence-index.md`, and provider marketing is never quoted as a statistic. Where a
+`docs/research/00-evidence-index.md`, and provider marketing is never quoted as a statistic. Where a
 real product would have primary data, this project says **NOT YET VALIDATED**.
 
 **What supply actually looks like.** One provider advertises 2,000+ caregivers across ten
@@ -232,8 +232,10 @@ sub-label on the attendant screen, the users least able to absorb low contrast.
 | D-18 ↺ | **"Verified" renamed to "documented"** | A weaker-sounding metric, and a truer one |
 | D-19 | Tell the attendant exactly what the family can see | More text on a small screen |
 | D-22 ↺ | Downgraded three of my own conclusions | The story reads less punchy |
+| D-23 ↺ | **Split the north star: documented vs complete days** | A low bar that looks unimpressive, and needs guardrails to stay honest |
+| D-24 | Corrections do not ask the attendant "why" | Thinner audit metadata, in exchange for not taxing the one user with no stake |
 
-Twenty-two decisions with alternatives and evidence: `docs/15-decision-log.md`.
+Twenty-five decisions with alternatives and evidence: `docs/decisions/15-decision-log.md`.
 
 **The one I would defend hardest — D-07.** A checklist that only records success produces a
 perfect record and a useless one. *"Strip finished, chemist was shut"* is a supply problem a
@@ -258,11 +260,11 @@ scheduler — also disclosed.
 
 ## 13 · QA
 
-**95 automated checks** — 65 unit and integration tests, 30 end-to-end journeys across
-mobile and desktop, plus the accessibility sweep. Zero console errors on eleven captured
-screens.
+**121 automated checks** — 70 unit and integration tests, 51 end-to-end journeys across
+phone, tablet and desktop, plus the accessibility sweep. Zero console errors on eleven
+captured screens. Every workflow in the definition of done has an end-to-end test behind it.
 
-Across two iterations, QA changed the product five times. The three that mattered:
+Across three iterations, QA changed the product seven times. The four that mattered:
 
 **① The handover pack lost the decisions.** (Iteration 1.) An E2E test walked a red flag from
 report to resolution, then opened the pack — the decision was not there. The differentiator,
@@ -275,7 +277,13 @@ the final value. **In a product whose only asset is the record, that made the re
 unfalsifiable.** Entries are now append-only; the family's day record shows *previous → new*
 with the time and the author. Five tests cover it.
 
-**③ The security control created the worse risk.** (Iteration 1.) Rate limiting counted
+**③ A test I wrote mutated shared state.** (Iteration 3.) A new end-to-end journey ended the
+seeded attendant to exercise the handover, which broke three later tests running in other
+viewport projects. A suite that only passes in one order is not a suite. The journey now
+builds its own family, plan and two attendants. Worth including because it is the honest
+kind of defect: I introduced it while adding coverage.
+
+**④ The security control created the worse risk.** (Iteration 1.) Rate limiting counted
 *every* sign-in, so a family and their attendant on one home connection could lock themselves
 out of a health record mid-crisis. Now only failures count.
 
@@ -291,8 +299,10 @@ The section a hiring manager should read first.
 
 | Claim | Evidence |
 | --- | --- |
-| The core flows work end to end on mobile and desktop | 95 automated checks, `docs/17` |
+| The core flows work end to end on phone, tablet and desktop | 121 automated checks |
 | A care entry cannot be silently rewritten | Append-only revision trail with tests |
+| A family cannot open another family's care case | Enforced server-side, covered end to end |
+| A replacement attendant receives the previous handover | The mechanism works; whether it *helps* is untested |
 | The interface clears mechanical accessibility checks | `npm run audit:a11y`, 0 issues |
 
 **All three are engineering facts. None is product validation.**
@@ -310,7 +320,10 @@ The section a hiring manager should read first.
 ### Next experiments
 
 Guides, protocols, consent language and pre-registered thresholds are written and unused in
-`docs/19-validation-plan.md`:
+`docs/validation/` — including a **pilot runbook** (recruitment, setup day, the rule that the
+researcher must not prop the pilot up, and four triggers that stop it early), **participant
+materials** in English and Hindi, three spoken **consent scripts**, and an **evidence table**
+that forces *what happened* apart from *what we think it means*:
 
 - **E0 — ten discharge interviews.** Fail condition: 4 of 10 name *finding* an attendant as
   their hardest problem.
@@ -323,8 +336,22 @@ Guides, protocols, consent language and pre-registered thresholds are written an
 
 ## 15 · Metrics
 
-**North star: documented care days per active patient per week** — every must-not-miss item
-recorded, ≥80% of the day recorded, no urgent alert left open.
+**North star: documented care days** — a day with at least one care record, entered by an
+identified user. **Complete care days** — every must-not-miss item recorded, ≥80% of the day
+recorded, no urgent alert left open — is tracked separately as the quality measure.
+
+**I changed this metric twice, and both changes were corrections to my own overclaiming.**
+
+The second change was the definition. The north star originally required a near-perfect day
+— which meant a household that recorded something every single day for two weeks, with a few
+honest misses, would have scored as an almost total failure. That is backwards for a product
+whose first risk is **abandonment**, not imperfection. The metric was pointed at the wrong
+risk, so it split in two: documented answers *is the habit forming*, complete answers *how
+good is the record when it is kept*. The family's week strip went from two states to three —
+grey, amber, green — because the amber case, recorded-but-something-important-missed, is the
+most actionable one and the binary version hid it.
+
+The first change was the word.
 
 **It used to be called "verified care days", and I changed it.** CareConnect cannot confirm
 that a tablet was swallowed. It records what one person entered, at a time, under their name,
@@ -411,7 +438,7 @@ the one thing that makes the record believable.
 
 ---
 
-*Sources are graded A–D and indexed in `docs/00-evidence-index.md`, with a claim register
+*Sources are graded A–D and indexed in `docs/research/00-evidence-index.md`, with a claim register
 recording which of my own conclusions were downgraded on re-audit. No user interviews were
 conducted; no traction, revenue or retention figures exist. Everything unvalidated is
 labelled as such — including the two assumptions the whole product rests on.*

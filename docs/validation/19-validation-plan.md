@@ -9,6 +9,20 @@ guides below are used and the answers contradict the strategy, the strategy chan
 
 ---
 
+## The rest of the kit
+
+This document holds the interview guides and the experiment designs. The operational
+materials for actually running the pilot live beside it:
+
+- **[pilot-runbook.md](pilot-runbook.md)** — recruitment, setup day, the fourteen days, what
+  stops the pilot early, and how to write it up
+- **[participant-materials.md](participant-materials.md)** — the attendant and family
+  one-pagers, the three spoken consent scripts, and the daily observation log
+- **[evidence-table.md](evidence-table.md)** — the template that keeps *what happened*
+  apart from *what we think it means*
+
+---
+
 # Part A · Primary research package
 
 ## A note on how these guides are written
@@ -341,7 +355,7 @@ what is actually known.
 | # | Experiment | Hypothesis | Status | Evidence | Verdict |
 | --- | --- | --- | --- | --- | --- |
 | E0 | Discovery interviews | Families experience verification and continuity, not discovery, as the hard part | **Not started** | Secondary sources only (docs 01, 03) | **Inconclusive** |
-| E1 | Attendant adoption | Attendants will log a full shift unsupervised in under 5 min | **Not started** | None | **Inconclusive** |
+| E1 | Attendant adoption | Attendants will log a full shift unsupervised in under 5 min | **Not started** — runbook and materials ready | None | **Inconclusive** |
 | E2 | Willingness to pay | Families will pay ₹399/mo or ₹999/episode unbundled | **Not started** | None | **Inconclusive** |
 | E3 | Handover value | The pack speeds up an incoming attendant | **Not started** | None | **Inconclusive** |
 | E4 | Agency channel | Agencies would offer this rather than block it | **Not started** | None | **Inconclusive** |
@@ -354,8 +368,10 @@ dataset that exists.
 
 | Claim | Status |
 | --- | --- |
-| The MVP's core flows work end to end on mobile and desktop | **Validated** — 95 automated checks, doc 17 |
+| The MVP's core flows work end to end on mobile, tablet and desktop | **Validated** — 121 automated checks, [doc 17](../engineering/17-testing.md) |
 | A care entry cannot be silently rewritten | **Validated** — append-only revision trail with tests |
+| A family cannot open another family's care case | **Validated** — enforced server-side, covered end to end |
+| A replacement attendant receives the previous attendant's handover | **Validated** — the mechanism works; whether it *helps* is E3 and untested |
 | The interface clears mechanical accessibility checks | **Validated** — `npm run audit:a11y`, 0 issues |
 | Attendants will use it | **NOT YET VALIDATED** |
 | Families will pay for it | **NOT YET VALIDATED** |

@@ -3,6 +3,57 @@
 All notable changes to CareConnect. This is a portfolio project, so entries record
 *product* decisions alongside code.
 
+## [0.3.0] — 2026-09-17
+
+MVP scope check against the build specification, and preparation for a real-world pilot.
+**No new product features.**
+
+### Changed — the north star was pointed at the wrong risk
+- **Split "documented care days" from "complete care days".** The north star required a
+  near-perfect day, so a household that recorded something every day for two weeks with a
+  few honest misses would have scored as an almost total failure. The MVP's first risk is
+  **abandonment**, not imperfection. Documented (≥1 care record for the day) is now the
+  north star; complete (every must-not-miss item, ≥80% recorded, no urgent alert open) is
+  tracked separately as the quality measure. (D-23)
+- The family's week strip went from two states to three — **grey** nothing recorded,
+  **amber** recorded with something important missed, **green** complete — because the amber
+  case is the most actionable and the binary version hid it.
+
+### Added — validation kit, so the pilot can be run rather than improvised
+- `docs/validation/pilot-runbook.md` — recruitment, setup day, the fourteen days, the rule
+  that the researcher must not prop the pilot up, four triggers that stop it early, and how
+  to write it up when n=3.
+- `docs/validation/participant-materials.md` — attendant and family one-pagers (Hindi first
+  for the attendant), three spoken consent scripts including one for the **patient**, and a
+  daily observation log with a no-coaching protocol.
+- `docs/validation/evidence-table.md` — the template that keeps *what happened* apart from
+  *what we think it means*, with a confidence vocabulary and a rule that no Low-confidence
+  observation may imply a feature.
+
+### Fixed
+- **A test I wrote mutated shared demo data.** A new end-to-end journey ended the seeded
+  attendant, breaking three later tests in other viewport projects. The journey now builds
+  its own family, plan and two attendants.
+- Adding a medicine or task surfaced failures only in a toast that disappears; both sheets
+  now keep a persistent "Not saved — …" banner.
+
+### Added — test coverage for the definition of done
+- End-to-end: **a family cannot open another family's care case**, and **a replacement
+  attendant sees the previous attendant's handover note on their first screen**.
+- A third Playwright project at tablet size (820×1180).
+- 65 → **70** unit and integration tests; 30 → **51** end-to-end journeys.
+
+### Changed — documentation reorganised, not expanded
+- `docs/` grouped into `research/`, `product/`, `decisions/`, `metrics/`, `validation/`,
+  `engineering/` and `portfolio/`, with `docs/README.md` as the front door. No document was
+  deleted and no new analysis was written. (D-25)
+
+### Deliberately not built
+No item from the excluded list was added. Specifically considered and declined: a mandatory
+"reason for this correction" prompt — the revision already stores the previous status *and*
+its reason, and charging the attendant a paragraph for fixing a mis-tap trains them not to
+fix it. (D-24)
+
 ## [0.2.0] — 2026-09-02
 
 An audit, honesty and integrity pass. **No new features.** Everything below came out of
@@ -44,7 +95,7 @@ auditing what was already there.
   worker in this product. (D-19)
 
 ### Changed — evidence and claims
-- Added a **claim register** to `docs/00-evidence-index.md` grading all 13 load-bearing
+- Added a **claim register** to `docs/research/00-evidence-index.md` grading all 13 load-bearing
   conclusions, and downgraded three that were stated more strongly than their evidence:
   *"every well-funded attempt failed"* → an INFERENCE from four unverified cases; *"the only
   player"* → an OBSERVATION from a desk review, not a census; *"no family described being
@@ -58,18 +109,18 @@ auditing what was already there.
   research at all — rather than padding the analysis with a guess.
 
 ### Added — documentation
-- `docs/19-validation-plan.md`: family, attendant and hospital/agency interview guides
+- `docs/validation/19-validation-plan.md`: family, attendant and hospital/agency interview guides
   written around past behaviour; an observation protocol with explicit no-coaching rules;
   research consent and privacy guidance that collects no clinical detail; three experiment
   designs with **pre-registered thresholds labelled as proposed, not results**; and an
   experiment tracker where every row currently reads *Not started · Inconclusive*.
-- `docs/portfolio-review.md`: the project scored 1–10 across 13 dimensions as a hiring
+- `docs/portfolio/portfolio-review.md`: the project scored 1–10 across 13 dimensions as a hiring
   manager would, with the five questions an interviewer would ask and the answers to give.
-- `docs/linkedin-carousel.md`: an 11-slide carousel outline with visuals and source
+- `docs/portfolio/linkedin-carousel.md`: an 11-slide carousel outline with visuals and source
   references per slide.
-- `docs/18-learnings.md` now answers 15 skeptical-interviewer questions, marking the weak
+- `docs/portfolio/18-learnings.md` now answers 15 skeptical-interviewer questions, marking the weak
   answers UNVALIDATED rather than dressing them up.
-- `docs/08-product-strategy.md` now scores five candidate payers — family, agency, hospital,
+- `docs/product/08-product-strategy.md` now scores five candidate payers — family, agency, hospital,
   employer, insurer — and names the employer benefit as the fallback if families will not
   pay unbundled.
 

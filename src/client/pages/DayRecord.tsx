@@ -28,7 +28,9 @@ const statusLabel: Record<string, string> = {
 
 export default function DayRecordPage() {
   const { planId = '', date = '' } = useParams();
-  const { data, loading, error, reload } = useApi<DayRecord & { documented: boolean }>(`/plans/${planId}/days/${date}`);
+  const { data, loading, error, reload } = useApi<DayRecord & { documented: boolean; complete: boolean }>(
+    `/plans/${planId}/days/${date}`
+  );
 
   if (loading) return <AppShell nav={planNav(planId)}><Loading /></AppShell>;
   if (error || !data)
@@ -49,8 +51,8 @@ export default function DayRecordPage() {
             Day {data.day_number} · {dateLabel(data.date)}
           </h1>
         </div>
-        <Badge tone={data.documented ? 'good' : data.score.missed_critical ? 'alert' : 'neutral'}>
-          {data.documented ? 'Fully documented' : data.score.missed_critical ? 'Important item missed' : 'Incomplete record'}
+        <Badge tone={data.complete ? 'good' : data.documented ? 'warn' : 'neutral'}>
+          {data.complete ? 'Record complete' : data.documented ? 'Something important missed' : 'Nothing recorded'}
         </Badge>
       </div>
 

@@ -23,6 +23,7 @@ interface DaySummary {
   expected: number;
   missed_critical: number;
   documented: boolean;
+  complete: boolean;
   shifts: number;
 }
 
@@ -292,8 +293,11 @@ export default function FamilyDashboard() {
       <Card>
         <SectionTitle>The week so far</SectionTitle>
         <p className="mb-3 text-sm text-ink-soft">
-          A day is <strong>fully documented</strong> when every must-not-miss item was recorded and no urgent alert was
-          left open. It means the record is complete — not that CareConnect checked the care itself.
+          A <span className="font-medium text-leaf-700">green</span> day means the record is complete: every
+          must-not-miss item recorded and no urgent alert left open. <span className="font-medium text-warn-600">Amber</span>{' '}
+          means something was recorded but something important was missed.{' '}
+          <span className="font-medium">Grey</span> means nothing was recorded at all. None of it means CareConnect
+          checked the care itself — only that it was written down.
         </p>
         <ul className="grid grid-cols-7 gap-1.5">
           {summary.map((s) => (
@@ -305,13 +309,15 @@ export default function FamilyDashboard() {
                 <span className="block text-[11px] text-ink-soft">{shortDate(s.date)}</span>
                 <span
                   className={`mx-auto mt-1.5 block h-7 w-7 rounded-full text-center text-xs font-semibold leading-7 ${
-                    s.documented
+                    s.complete
                       ? 'bg-leaf-500 text-white'
-                      : s.missed_critical > 0
-                        ? 'bg-alert-500 text-white'
+                      : s.documented
+                        ? 'bg-warn-600 text-white'
                         : 'bg-sand-100 text-ink-soft'
                   }`}
-                  aria-label={`Day ${s.day_number}: ${s.documented ? 'fully documented' : s.missed_critical ? 'important item missed' : 'incomplete record'}`}
+                  aria-label={`Day ${s.day_number}: ${
+                    s.complete ? 'record complete' : s.documented ? 'recorded, with something important missed' : 'nothing recorded'
+                  }`}
                 >
                   {s.day_number}
                 </span>

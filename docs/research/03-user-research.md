@@ -6,7 +6,7 @@
 usability tests with real families or attendants. The guides that would fix this —
 family, attendant and hospital/agency interview scripts, an observation protocol and
 consent guidance — are written and ready in
-[19-validation-plan.md](19-validation-plan.md). None has been used. This document is a synthesis of
+[19-validation-plan.md](../validation/19-validation-plan.md). None has been used. This document is a synthesis of
 secondary sources: peer-reviewed studies, government data, journalism, provider
 documentation, and public complaints.
 

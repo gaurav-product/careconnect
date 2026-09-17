@@ -4,7 +4,7 @@ import { getDb } from '../db.js';
 import { requireAuth, requireMembership, type AuthedRequest } from '../auth.js';
 import { badRequest, conflict, forbidden, notFound } from '../errors.js';
 import { istDate, newId, newInviteCode, nowIso, p } from '../util.js';
-import { getPlanBundle, planDates, getDayRecord, isDocumentedCareDay, buildHandover } from '../services/record.js';
+import { getPlanBundle, planDates, getDayRecord, isDocumentedCareDay, isCompleteCareDay, buildHandover } from '../services/record.js';
 import { sweepPlanAlerts } from '../services/alerts.js';
 import { track } from '../services/events.js';
 import { TEMPLATES, getTemplate } from '../templates.js';
@@ -158,6 +158,7 @@ planRouter.get('/:id', (req: AuthedRequest, res) => {
       expected: day.score.expected,
       missed_critical: day.score.missed_critical,
       documented: isDocumentedCareDay(day),
+      complete: isCompleteCareDay(day),
       shifts: day.shifts.length
     };
   });

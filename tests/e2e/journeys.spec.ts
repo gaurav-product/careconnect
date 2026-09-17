@@ -213,6 +213,123 @@ test.describe('the record cannot be quietly rewritten', () => {
   });
 });
 
+test.describe('access control and continuity, end to end', () => {
+  test('a family cannot open another family\'s care case', async ({ browser }) => {
+    const stamp = Date.now().toString().slice(-6);
+    const ctx = await browser.newContext();
+    const outsider = await ctx.newPage();
+
+    // First, learn a real plan URL as the legitimate owner.
+    await signIn(outsider, '9810012345');
+    await outsider.getByRole('link', { name: /Ramesh Iyer/ }).click();
+    await outsider.waitForLoadState('networkidle');
+    const planUrl = outsider.url();
+    await outsider.getByRole('button', { name: 'Sign out' }).click();
+
+    // Then sign in as an unrelated family account and try that exact URL.
+    await outsider.goto('/register');
+    await outsider.getByRole('button', { name: /A family member/ }).click();
+    await outsider.getByLabel('Your name').fill('Unrelated Person');
+    await outsider.getByLabel('Mobile number').fill(`96${stamp.padStart(8, '9')}`.slice(0, 10));
+    await outsider.getByLabel('Password').fill('password123');
+    await outsider.getByRole('button', { name: 'Create account' }).click();
+
+    await outsider.goto(planUrl);
+    await expect(outsider.getByText(/do not have access/i)).toBeVisible();
+    await expect(outsider.getByText('Ramesh Iyer')).toHaveCount(0);
+
+    await ctx.close();
+  });
+
+  test('a replacement attendant sees the previous attendant\'s handover on their first screen', async ({ browser }) => {
+    // Builds its own episode: ending an attendant is destructive, and the shared demo
+    // data is read by other tests.
+    const stamp = Date.now().toString().slice(-6);
+    const famCtx = await browser.newContext();
+    const family = await famCtx.newPage();
+
+    await family.goto('/register');
+    await family.getByRole('button', { name: /A family member/ }).click();
+    await family.getByLabel('Your name').fill('Handover Family');
+    await family.getByLabel('Mobile number').fill(`94${stamp.padStart(8, '9')}`.slice(0, 10));
+    await family.getByLabel('Password').fill('password123');
+    await family.getByRole('button', { name: 'Create account' }).click();
+
+    await family.getByLabel("Patient's name").fill('Handover Patient');
+    await family.getByLabel('Age').fill('70');
+    await family.getByLabel('City they are recovering in').fill('New Delhi');
+    await family.getByLabel('Surgery or condition').fill('Hip replacement');
+    await family.getByRole('button', { name: 'Continue' }).click();
+    await family.getByRole('button', { name: /Hip \/ knee replacement/ }).click();
+    await family.getByRole('button', { name: 'Continue' }).click();
+    await family.getByLabel('Medicine', { exact: true }).fill('Rivaroxaban');
+    await family.getByLabel('Dose', { exact: true }).fill('10 mg');
+    await family.getByLabel('Must not be missed').check();
+    await family.getByRole('button', { name: 'Create care plan' }).click();
+
+    // First attendant joins, works a shift, and leaves a note for whoever is next.
+    await family.getByLabel('Their name').fill('First Attendant');
+    await family.getByRole('button', { name: 'Create invite code' }).click();
+    const firstCode = (await family.locator('p.tracking-\\[0\\.3em\\]').first().innerText()).trim();
+
+    const att1Ctx = await browser.newContext();
+    const att1 = await att1Ctx.newPage();
+    await att1.goto('/register');
+    await att1.getByRole('button', { name: /An attendant/ }).click();
+    await att1.getByLabel('Your name').fill('First Attendant');
+    await att1.getByLabel('Mobile number').fill(`93${stamp.padStart(8, '9')}`.slice(0, 10));
+    await att1.getByLabel('Password').fill('password123');
+    await att1.getByRole('button', { name: 'Create account' }).click();
+    await att1.getByLabel(/Invite code/).fill(firstCode);
+    await att1.getByRole('button', { name: /Join/ }).click();
+    await att1.getByRole('button', { name: /Start my shift/ }).click();
+    await att1.getByRole('button', { name: /^Done/ }).first().click();
+    await att1.getByRole('button', { name: /End shift/ }).click();
+    await att1.getByLabel(/Note for the next person/).fill('He sleeps on the right side only. Walker is by the door.');
+    await att1.getByRole('button', { name: /End shift · खत्म करें/ }).click();
+    await expect(att1.getByText(/Shift closed/)).toBeVisible();
+
+    // The family ends her — which must always write a handover.
+    await family.goto('/plans');
+    await family.getByRole('link', { name: /Handover Patient/ }).click();
+    await family.getByRole('link', { name: 'Attendants' }).click();
+    await family.getByRole('button', { name: 'End on this plan' }).first().click();
+    await family.getByLabel(/Why are they leaving/).fill('Went back to her village');
+    await family.getByRole('button', { name: 'End and save handover' }).click();
+    await expect(family.getByText(/handover pack has been saved/i)).toBeVisible();
+
+    // The replacement joins and is handed the context on her first screen.
+    await family.getByRole('button', { name: 'Add an attendant' }).click();
+    await family.getByLabel('Their name').fill('Replacement Attendant');
+    await family.getByRole('button', { name: 'Create invite code' }).click();
+    const secondCode = (await family.locator('p.tracking-\\[0\\.3em\\]').first().innerText()).trim();
+
+    const att2Ctx = await browser.newContext();
+    const att2 = await att2Ctx.newPage();
+    await att2.goto('/register');
+    await att2.getByRole('button', { name: /An attendant/ }).click();
+    await att2.getByLabel('Your name').fill('Replacement Attendant');
+    await att2.getByLabel('Mobile number').fill(`92${stamp.padStart(8, '9')}`.slice(0, 10));
+    await att2.getByLabel('Password').fill('password123');
+    await att2.getByRole('button', { name: 'Create account' }).click();
+    await att2.getByLabel(/Invite code/).fill(secondCode);
+    await att2.getByRole('button', { name: /Join/ }).click();
+
+    // The knowledge survived the person leaving. That is the whole thesis.
+    await expect(att2.getByText(/Read this first/)).toBeVisible();
+    await expect(att2.getByText(/sleeps on the right side only/)).toBeVisible();
+
+    await att2.getByRole('link', { name: /Full care plan/ }).click();
+    await expect(att2.getByRole('heading', { name: 'Handover pack' })).toBeVisible();
+    await expect(att2.getByText('Rivaroxaban').first()).toBeVisible();
+    await expect(att2.getByRole('heading', { name: /Warning signs/ })).toBeVisible();
+
+    await famCtx.close();
+    await att1Ctx.close();
+    await att2Ctx.close();
+  });
+});
+
 test.describe('failure states', () => {
   test('a wrong password says so without leaking which field was wrong', async ({ page }) => {
     await signIn(page, '9810012345', 'wrongpassword');

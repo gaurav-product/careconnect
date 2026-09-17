@@ -72,4 +72,4 @@ strategy on thin evidence, and the one that could invalidate the data source.
 No user interviews were conducted for this project. Wherever a real product would have
 primary research, this repository says **NOT YET VALIDATED** instead of inventing a number.
 The interview guides that would close these gaps are written and ready in
-[19-validation-plan.md](19-validation-plan.md); none has been used.
+[19-validation-plan.md](../validation/19-validation-plan.md); none has been used.

@@ -18,7 +18,7 @@ paragraphs plus the links.
 
 **Visual:** the four-step brief as a flow — Discover → Evaluate → Book → Manage — in flat
 grey, deliberately lifeless.
-**Source:** `docs/01-problem-discovery.md`
+**Source:** `docs/research/01-problem-discovery.md`
 
 ---
 
@@ -31,7 +31,7 @@ grey, deliberately lifeless.
 
 **Visual:** one sentence centred on an empty field — "Finding a caregiver is the hard part"
 — with a thin ochre underline.
-**Source:** `docs/01-problem-discovery.md`
+**Source:** `docs/research/01-problem-discovery.md`
 
 ---
 
@@ -45,7 +45,7 @@ grey, deliberately lifeless.
 
 **Visual:** horizontal bar chart — time-to-find an attendant by channel, in hours, all bars
 short.
-**Source:** `docs/00-evidence-index.md` (S14, S22), `docs/04-competitive-analysis.md`
+**Source:** `docs/research/00-evidence-index.md` (S14, S22), `docs/research/04-competitive-analysis.md`
 
 ---
 
@@ -59,7 +59,7 @@ short.
 
 **Visual:** three complaint quotes stacked as cards, each tagged with its source grade
 (C / D) — the grading itself is part of the point.
-**Source:** `docs/01-problem-discovery.md`
+**Source:** `docs/research/01-problem-discovery.md`
 
 ---
 
@@ -72,7 +72,7 @@ short.
 
 **Visual:** the Slide 1 flow struck through in ochre, with one line beneath it:
 *"Own the record, not the supply."*
-**Source:** `docs/15-decision-log.md` (D-01, D-02)
+**Source:** `docs/decisions/15-decision-log.md` (D-01, D-02)
 
 ---
 
@@ -85,7 +85,7 @@ short.
 - For the adult child who lives in another city.
 
 **Visual:** product screenshot — the family's Today screen, in a laptop frame.
-**Source:** `docs/08-product-strategy.md`
+**Source:** `docs/product/08-product-strategy.md`
 
 ---
 
@@ -99,7 +99,7 @@ short.
 
 **Visual:** the attendant shift screen in a phone frame, with the bilingual buttons
 circled.
-**Source:** `docs/12-design-decisions.md` (D-03, D-04)
+**Source:** `docs/product/12-design-decisions.md` (D-03, D-04)
 
 ---
 
@@ -113,7 +113,7 @@ circled.
 - ❌ Caregiver booking — the thing I was originally asked to build.
 
 **Visual:** four struck-through feature cards, each with its one-line reason.
-**Source:** `docs/09-prd.md`
+**Source:** `docs/product/09-prd.md`
 
 ---
 
@@ -128,7 +128,7 @@ circled.
 
 **Visual:** the corrections card from the day record — struck-through "missed — he said he
 was not hungry" → "done".
-**Source:** `docs/15-decision-log.md` (D-17), `docs/17-testing.md`
+**Source:** `docs/decisions/15-decision-log.md` (D-17), `docs/engineering/17-testing.md`
 
 ---
 
@@ -143,7 +143,7 @@ was not hungry" → "done".
 
 **Visual:** the validation table — three green "validated" rows (all engineering), four
 amber "not yet validated" rows (all product).
-**Source:** `docs/19-validation-plan.md`, `docs/13-metrics.md` (D-18)
+**Source:** `docs/validation/19-validation-plan.md`, `docs/metrics/13-metrics.md` (D-18)
 
 ---
 
@@ -156,7 +156,7 @@ amber "not yet validated" rows (all product).
 - Stop building when more code can't answer the open question.
 
 **Visual:** three lines on the sand ground, generous leading, repo link at the base.
-**Source:** `docs/18-learnings.md`
+**Source:** `docs/portfolio/18-learnings.md`
 
 ---
 
@@ -164,9 +164,9 @@ amber "not yet validated" rows (all product).
 
 | Slide | Chart | Data |
 | --- | --- | --- |
-| 3 | Time-to-find by channel | `docs/01-problem-discovery.md` supply table |
-| 4 | Complaint themes | `docs/00-evidence-index.md` (S13, S16, S9) |
-| 10 | Validated vs unvalidated | `docs/19-validation-plan.md` Part C |
+| 3 | Time-to-find by channel | `docs/research/01-problem-discovery.md` supply table |
+| 4 | Complaint themes | `docs/research/00-evidence-index.md` (S13, S16, S9) |
+| 10 | Validated vs unvalidated | `docs/validation/19-validation-plan.md` Part C |
 
 ## Rules for this carousel
 

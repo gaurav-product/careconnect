@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { addDays, dayNumber, istDate, istTime, slotForTime } from '../../src/server/util.js';
 import { isOutOfRange, severityForVital, URGENT_BANDS } from '../../src/server/services/alerts.js';
-import { isDocumentedCareDay, slotForWindow } from '../../src/server/services/record.js';
+import { isCompleteCareDay, isDocumentedCareDay, slotForWindow } from '../../src/server/services/record.js';
 import type { DayRecord } from '../../src/shared/types.js';
 
 describe('Indian time handling', () => {
@@ -64,7 +64,53 @@ describe('vital thresholds', () => {
   });
 });
 
-describe('the documented care day definition', () => {
+describe('the documented care day definition — the north star', () => {
+  const day = (over: Partial<DayRecord> = {}): DayRecord => ({
+    date: '2026-09-01',
+    day_number: 9,
+    shifts: [],
+    meds: [],
+    tasks: [],
+    vitals: [],
+    observations: [],
+    alerts: [],
+    revisions: [],
+    score: { logged: 0, expected: 0, missed_critical: 0 },
+    ...over
+  });
+
+  it('counts a day with any care record at all', () => {
+    expect(isDocumentedCareDay(day({ score: { logged: 1, expected: 14, missed_critical: 0 } }))).toBe(true);
+  });
+
+  it('counts a day where only a reading was taken', () => {
+    const d = day();
+    d.vitals = [
+      { id: 'v1', plan_id: 'p', shift_id: null, type: 'temp', value1: 98.4, value2: null, out_of_range: false, logged_at: '', logged_by: 'u' }
+    ];
+    expect(isDocumentedCareDay(d)).toBe(true);
+  });
+
+  it('counts a day where only a problem was reported', () => {
+    const d = day();
+    d.observations = [
+      { id: 'o1', plan_id: 'p', shift_id: null, red_flag_id: null, note: 'wound looks red', severity: 'watch', logged_at: '', logged_by: 'u', red_flag_label: null }
+    ];
+    expect(isDocumentedCareDay(d)).toBe(true);
+  });
+
+  it('does not count a day with nothing recorded', () => {
+    expect(isDocumentedCareDay(day({ score: { logged: 0, expected: 14, missed_critical: 0 } }))).toBe(false);
+  });
+
+  it('counts an imperfect day — a missed dose with a reason is still a record', () => {
+    const d = day({ score: { logged: 3, expected: 14, missed_critical: 2 } });
+    expect(isDocumentedCareDay(d)).toBe(true);
+    expect(isCompleteCareDay(d)).toBe(false);
+  });
+});
+
+describe('the complete care day definition — the quality measure', () => {
   const base = (over: Partial<DayRecord> = {}): DayRecord => ({
     date: '2026-09-01',
     day_number: 9,
@@ -85,21 +131,21 @@ describe('the documented care day definition', () => {
   });
 
   it('counts a complete day with nothing outstanding', () => {
-    expect(isDocumentedCareDay(base())).toBe(true);
+    expect(isCompleteCareDay(base())).toBe(true);
   });
 
   it('does not count a day where a must-not-miss item was missed', () => {
     const day = base();
     day.meds[0].status = 'missed';
     day.score.missed_critical = 1;
-    expect(isDocumentedCareDay(day)).toBe(false);
+    expect(isCompleteCareDay(day)).toBe(false);
   });
 
   it('does not count a day where a critical item was never recorded at all', () => {
     const day = base();
     day.tasks[0].status = 'pending';
     day.score.logged = 2;
-    expect(isDocumentedCareDay(day)).toBe(false);
+    expect(isCompleteCareDay(day)).toBe(false);
   });
 
   it('does not count a day with an urgent alert left open', () => {
@@ -112,7 +158,7 @@ describe('the documented care day definition', () => {
         }
       ]
     });
-    expect(isDocumentedCareDay(day)).toBe(false);
+    expect(isCompleteCareDay(day)).toBe(false);
   });
 
   it('still counts a day where an urgent alert was dealt with', () => {
@@ -125,17 +171,17 @@ describe('the documented care day definition', () => {
         }
       ]
     });
-    expect(isDocumentedCareDay(day)).toBe(true);
+    expect(isCompleteCareDay(day)).toBe(true);
   });
 
   it('needs at least 80% of the day recorded', () => {
     const day = base();
     day.tasks[1].status = 'pending';
     day.score = { logged: 2, expected: 3, missed_critical: 0 };
-    expect(isDocumentedCareDay(day)).toBe(false);
+    expect(isCompleteCareDay(day)).toBe(false);
   });
 
   it('never counts a day with nothing expected as documented', () => {
-    expect(isDocumentedCareDay(base({ meds: [], tasks: [], score: { logged: 0, expected: 0, missed_critical: 0 } }))).toBe(false);
+    expect(isCompleteCareDay(base({ meds: [], tasks: [], score: { logged: 0, expected: 0, missed_critical: 0 } }))).toBe(false);
   });
 });
