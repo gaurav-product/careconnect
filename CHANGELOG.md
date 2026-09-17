@@ -3,6 +3,51 @@
 All notable changes to CareConnect. This is a portfolio project, so entries record
 *product* decisions alongside code.
 
+## [1.0.0] — 2026-09-17
+
+Final delivery pass: coverage for every required workflow, a repository organised for
+reading, and a mechanical guard against the documentation drifting from the product.
+**No new product features.**
+
+### Added — test coverage for the full definition of done
+- **A failed save is proven to stay visible.** The test aborts the request mid-round, checks
+  the bilingual banner appears, waits six seconds (longer than a toast lives), confirms it is
+  still there and that the item still offers the action — then restores the connection and
+  confirms the same tap works and the warning clears.
+- **The Hindi flow is tested as a flow**, not as a translation: every action label, the
+  report sheet, no horizontal overflow, and the attendant's own Hindi words arriving on the
+  family's screen.
+- **Metrics are proven to come from records** — documented days moves from 0 to 1 after a
+  single task is recorded, while complete days correctly does not.
+- **Phone widths 375 / 390 / 430 px** are checked for horizontal overflow and for any control
+  measured outside the viewport.
+- 63 end-to-end journeys (21 scenarios × phone, tablet, desktop), up from 51.
+
+### Added — one-command verification and CI
+- `npm run verify` — typecheck, build, unit and integration tests, end-to-end across three
+  viewports, the accessibility sweep and the consistency audit.
+- `npm run reset-demo` — rebuild the demo episode from scratch.
+- `.github/workflows/verify.yml` — the same checks on every push and pull request.
+
+### Added — a guard against the docs drifting from the product
+- `npm run audit:consistency` checks banned vocabulary, every quoted count, every internal
+  link across 34 documents, and the app source for any claim to *verify* care.
+- **It found 21 real inconsistencies on its first run**, all fixed. (D-26)
+
+### Changed — repository organised for reading
+- Application code moved to `app/`; documentation regrouped into `00-overview` …
+  `10-evidence` in the order the story is told; screenshots into `10-evidence/`. (D-27)
+- Added a product overview, a glossary (product, metric, evidence and validation
+  vocabulary), a PM interview story, and a note on what the evidence proves and does not.
+
+### Fixed
+- The screenshot script was still writing to the pre-restructure folder, which had silently
+  split the evidence set in two.
+- The corrections screenshot depended on guessing a day label; it now asks the API which day
+  actually carries a revision.
+- **18 screenshots**, all regenerated from the running application in one pass, with zero
+  console errors.
+
 ## [0.3.0] — 2026-09-17
 
 MVP scope check against the build specification, and preparation for a real-world pilot.
@@ -20,13 +65,13 @@ MVP scope check against the build specification, and preparation for a real-worl
   case is the most actionable and the binary version hid it.
 
 ### Added — validation kit, so the pilot can be run rather than improvised
-- `docs/validation/pilot-runbook.md` — recruitment, setup day, the fourteen days, the rule
+- `docs/07-validation/pilot-runbook.md` — recruitment, setup day, the fourteen days, the rule
   that the researcher must not prop the pilot up, four triggers that stop it early, and how
   to write it up when n=3.
-- `docs/validation/participant-materials.md` — attendant and family one-pagers (Hindi first
+- `docs/07-validation/participant-materials.md` — attendant and family one-pagers (Hindi first
   for the attendant), three spoken consent scripts including one for the **patient**, and a
   daily observation log with a no-coaching protocol.
-- `docs/validation/evidence-table.md` — the template that keeps *what happened* apart from
+- `docs/07-validation/evidence-table.md` — the template that keeps *what happened* apart from
   *what we think it means*, with a confidence vocabulary and a rule that no Low-confidence
   observation may imply a feature.
 
@@ -95,7 +140,7 @@ auditing what was already there.
   worker in this product. (D-19)
 
 ### Changed — evidence and claims
-- Added a **claim register** to `docs/research/00-evidence-index.md` grading all 13 load-bearing
+- Added a **claim register** to `docs/02-research/evidence-index.md` grading all 13 load-bearing
   conclusions, and downgraded three that were stated more strongly than their evidence:
   *"every well-funded attempt failed"* → an INFERENCE from four unverified cases; *"the only
   player"* → an OBSERVATION from a desk review, not a census; *"no family described being
@@ -109,18 +154,18 @@ auditing what was already there.
   research at all — rather than padding the analysis with a guess.
 
 ### Added — documentation
-- `docs/validation/19-validation-plan.md`: family, attendant and hospital/agency interview guides
+- `docs/07-validation/validation-plan.md`: family, attendant and hospital/agency interview guides
   written around past behaviour; an observation protocol with explicit no-coaching rules;
   research consent and privacy guidance that collects no clinical detail; three experiment
   designs with **pre-registered thresholds labelled as proposed, not results**; and an
   experiment tracker where every row currently reads *Not started · Inconclusive*.
-- `docs/portfolio/portfolio-review.md`: the project scored 1–10 across 13 dimensions as a hiring
+- `docs/09-portfolio/portfolio-review.md`: the project scored 1–10 across 13 dimensions as a hiring
   manager would, with the five questions an interviewer would ask and the answers to give.
-- `docs/portfolio/linkedin-carousel.md`: an 11-slide carousel outline with visuals and source
+- `docs/09-portfolio/linkedin-carousel.md`: an 11-slide carousel outline with visuals and source
   references per slide.
-- `docs/portfolio/18-learnings.md` now answers 15 skeptical-interviewer questions, marking the weak
+- `docs/09-portfolio/learnings.md` now answers 15 skeptical-interviewer questions, marking the weak
   answers UNVALIDATED rather than dressing them up.
-- `docs/product/08-product-strategy.md` now scores five candidate payers — family, agency, hospital,
+- `docs/03-strategy/product-strategy.md` now scores five candidate payers — family, agency, hospital,
   employer, insurer — and names the employer benefit as the fallback if families will not
   pay unbundled.
 

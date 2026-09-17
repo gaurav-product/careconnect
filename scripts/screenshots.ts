@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const BASE = process.env.BASE_URL || 'http://localhost:4000';
-const OUT = path.resolve(process.cwd(), 'docs/screenshots');
+const OUT = path.resolve(process.cwd(), 'docs/10-evidence/screenshots');
 fs.mkdirSync(OUT, { recursive: true });
 
 const problems: string[] = [];
@@ -55,11 +55,25 @@ async function main() {
   await fam.goto(`${BASE}/plans`);
   await fam.getByRole('link', { name: /Ramesh Iyer/ }).click();
   await fam.waitForLoadState('networkidle');
-  const correctedDay = fam.getByRole('link', { name: /Day 7:/ });
-  if (await correctedDay.count()) {
-    await correctedDay.click();
+  // Find the day that actually carries a correction, by asking the API rather than
+  // guessing at a label — the screenshot must show the real thing.
+  const correctedUrl = await fam.evaluate(async () => {
+    const links = Array.from(document.querySelectorAll('a[href*="/day/"]')) as HTMLAnchorElement[];
+    for (const a of links.reverse()) {
+      const [, planId, , date] = a.pathname.split('/').filter(Boolean).slice(0, 4) as string[];
+      const res = await fetch(`/api/plans/${planId}/days/${date}`, { credentials: 'same-origin' });
+      if (!res.ok) continue;
+      const day = await res.json();
+      if (day.revisions?.length) return a.pathname;
+    }
+    return null;
+  });
+  if (correctedUrl) {
+    await fam.goto(`${BASE}${correctedUrl}`);
     await fam.waitForLoadState('networkidle');
     await shot(fam, '11-corrections', true);
+  } else {
+    console.log('  – no corrected day in the demo data, skipping 11-corrections');
   }
 
   await fam.getByRole('link', { name: 'Handover pack' }).click();
@@ -101,6 +115,64 @@ async function main() {
   await famPhone.getByRole('link', { name: /Ramesh Iyer/ }).click();
   await famPhone.waitForLoadState('networkidle');
   await shot(famPhone, '10-family-dashboard-mobile', true);
+
+  // --- screens that only exist for a brand-new attendant: captured by actually
+  // --- creating an episode, so every image is from the running product.
+  const newFam = await desktop.newPage();
+  newFam.on('console', (m: any) => m.type() === 'error' && problems.push(`console: ${m.text()}`));
+  const stamp = `${Date.now()}`.slice(-9);
+
+  await newFam.goto(`${BASE}/register`);
+  await newFam.getByRole('button', { name: /A family member/ }).click();
+  await newFam.getByLabel('Your name').fill('Demo Daughter');
+  await newFam.getByLabel('Mobile number').fill(`9${stamp}`);
+  await newFam.getByLabel('Password').fill('password123');
+  await newFam.getByRole('button', { name: 'Create account' }).click();
+  await newFam.waitForLoadState('networkidle');
+  await shot(newFam, '12-create-care-case', true);
+
+  await newFam.getByLabel("Patient's name").fill('Demo Patient');
+  await newFam.getByLabel('Age').fill('71');
+  await newFam.getByLabel('City they are recovering in').fill('New Delhi');
+  await newFam.getByLabel('Surgery or condition').fill('Right hip replacement');
+  await newFam.getByRole('button', { name: 'Continue' }).click();
+  await shot(newFam, '13-choose-recovery-type', true);
+  await newFam.getByRole('button', { name: /Hip \/ knee replacement/ }).click();
+  await newFam.getByRole('button', { name: 'Continue' }).click();
+  await newFam.getByLabel('Medicine', { exact: true }).fill('Rivaroxaban');
+  await newFam.getByLabel('Dose', { exact: true }).fill('10 mg');
+  await newFam.getByLabel('Must not be missed').check();
+  await shot(newFam, '14-care-plan-medicines', true);
+  await newFam.getByRole('button', { name: 'Create care plan' }).click();
+
+  await newFam.getByLabel('Their name').fill('Demo Attendant');
+  await newFam.getByRole('button', { name: 'Create invite code' }).click();
+  await shot(newFam, '15-invite-code', true);
+  const inviteCode = (await newFam.locator('p.tracking-\\[0\\.3em\\]').first().innerText()).trim();
+
+  const newAtt = await phone.newPage();
+  newAtt.on('console', (m: any) => m.type() === 'error' && problems.push(`console: ${m.text()}`));
+  await newAtt.goto(`${BASE}/register`);
+  await newAtt.getByRole('button', { name: /An attendant/ }).click();
+  await newAtt.getByLabel('Your name').fill('Demo Attendant');
+  await newAtt.getByLabel('Mobile number').fill(`8${stamp}`);
+  await newAtt.getByLabel('Password').fill('password123');
+  await newAtt.getByRole('button', { name: 'Create account' }).click();
+  await shot(newAtt, '16-attendant-join', true);
+  await newAtt.getByLabel(/Invite code/).fill(inviteCode);
+  await newAtt.getByRole('button', { name: /Join/ }).click();
+  await newAtt.waitForLoadState('networkidle');
+  await shot(newAtt, '17-attendant-before-shift', true);
+
+  // --- a tablet layout, from the real app
+  const tablet = await browser.newContext({ viewport: { width: 820, height: 1180 }, deviceScaleFactor: 2 });
+  const tabPage = await tablet.newPage();
+  tabPage.on('console', (m: any) => m.type() === 'error' && problems.push(`console: ${m.text()}`));
+  await signIn(tabPage, '9810012345');
+  await tabPage.getByRole('link', { name: /Ramesh Iyer/ }).click();
+  await tabPage.waitForLoadState('networkidle');
+  await shot(tabPage, '18-family-tablet', true);
+  await tablet.close();
 
   await browser.close();
 

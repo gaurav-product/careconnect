@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { addDays, dayNumber, istDate, istTime, slotForTime } from '../../src/server/util.js';
-import { isOutOfRange, severityForVital, URGENT_BANDS } from '../../src/server/services/alerts.js';
-import { isCompleteCareDay, isDocumentedCareDay, slotForWindow } from '../../src/server/services/record.js';
-import type { DayRecord } from '../../src/shared/types.js';
+import { addDays, dayNumber, istDate, istTime, slotForTime } from '../../app/server/util.js';
+import { isOutOfRange, severityForVital, URGENT_BANDS } from '../../app/server/services/alerts.js';
+import { isCompleteCareDay, isDocumentedCareDay, slotForWindow } from '../../app/server/services/record.js';
+import type { DayRecord } from '../../app/shared/types.js';
 
 describe('Indian time handling', () => {
   it('rolls the care day over at IST midnight, not UTC midnight', () => {

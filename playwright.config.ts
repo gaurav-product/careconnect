@@ -40,7 +40,7 @@ export default defineConfig({
     }
   ],
   webServer: {
-    command: 'npm run build && DB_PATH=./data/e2e.db RESET=1 npx tsx scripts/seed.ts && DB_PATH=./data/e2e.db PORT=4100 JWT_SECRET=e2e-secret-key npx tsx src/server/index.ts',
+    command: 'npm run build && DB_PATH=./data/e2e.db RESET=1 npx tsx scripts/seed.ts && DB_PATH=./data/e2e.db PORT=4100 JWT_SECRET=e2e-secret-key npx tsx app/server/index.ts',
     url: 'http://127.0.0.1:4100/api/health',
     reuseExistingServer: false,
     timeout: 120_000

@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "types": ["node", "vitest/globals"],
-    "paths": { "@shared/*": ["./src/shared/*"] }
+    "paths": { "@shared/*": ["./app/shared/*"] }
   },
-  "include": ["src", "tests", "scripts", "vite.config.ts"]
+  "include": ["app", "tests", "scripts", "vite.config.ts"]
 }

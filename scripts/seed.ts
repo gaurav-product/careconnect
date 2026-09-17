@@ -7,11 +7,11 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { getDb, resetDb } from '../src/server/db.js';
-import { hashPassword } from '../src/server/auth.js';
-import { addDays, istDate, istTime, newId, newInviteCode } from '../src/server/util.js';
-import { getTemplate } from '../src/server/templates.js';
-import { buildHandover } from '../src/server/services/record.js';
+import { getDb, resetDb } from '../app/server/db.js';
+import { hashPassword } from '../app/server/auth.js';
+import { addDays, istDate, istTime, newId, newInviteCode } from '../app/server/util.js';
+import { getTemplate } from '../app/server/templates.js';
+import { buildHandover } from '../app/server/services/record.js';
 
 const DB_FILE = process.env.DB_PATH || path.resolve(process.cwd(), 'data/careconnect.db');
 

@@ -1,6 +1,6 @@
 {
   "name": "careconnect",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "CareConnect \u2014 a post-discharge care accountability layer for Indian families supervising a home attendant.",
@@ -9,17 +9,22 @@
   },
   "scripts": {
     "dev": "concurrently -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
-    "dev:api": "tsx watch src/server/index.ts",
+    "dev:api": "tsx watch app/server/index.ts",
     "dev:web": "vite",
     "seed": "tsx scripts/seed.ts",
     "build": "vite build && tsc -p tsconfig.server.json",
-    "start": "NODE_ENV=production tsx src/server/index.ts",
+    "start": "NODE_ENV=production tsx app/server/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "audit:a11y": "tsx scripts/a11y-audit.ts",
-    "shots": "tsx scripts/screenshots.ts"
+    "shots": "tsx scripts/screenshots.ts",
+    "reset-demo": "RESET=1 tsx scripts/seed.ts",
+    "verify": "npm run typecheck && npm run build && npm test && npm run test:e2e && npm run audit:a11y && npm run audit:consistency",
+    "test:integration": "vitest run tests/server",
+    "test:unit": "vitest run tests/unit tests/client",
+    "audit:consistency": "tsx scripts/consistency-check.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -53,6 +58,7 @@
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "vite": "^8.2.2",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "wait-on": "^9.1.0"
   }
 }

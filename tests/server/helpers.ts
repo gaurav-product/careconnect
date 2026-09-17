@@ -1,8 +1,8 @@
 import request from 'supertest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { createApp } from '../../src/server/index.js';
-import { getDb, resetDb } from '../../src/server/db.js';
+import { createApp } from '../../app/server/index.js';
+import { getDb, resetDb } from '../../app/server/db.js';
 
 /** Each test file gets its own on-disk database, removed on teardown. */
 export function freshApp(name: string) {

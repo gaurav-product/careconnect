@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dateLabel, readingValue, shortDate, timeLabel } from '../../src/client/lib/format.js';
+import { dateLabel, readingValue, shortDate, timeLabel } from '../../app/client/lib/format.js';
 
 describe('formatting for Indian families', () => {
   it('keeps an IST calendar date on the right day regardless of the viewer timezone', () => {

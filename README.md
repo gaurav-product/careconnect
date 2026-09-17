@@ -11,10 +11,10 @@ survives them leaving.
 **No users yet · Two hypotheses unvalidated · Nothing here claims traction**
 
 `React 19` · `TypeScript` · `Express 5` · `SQLite` · `Tailwind` · `Vitest` · `Playwright`
-· **121 automated checks** · **0 accessibility issues**
+· **142 automated checks** · **0 accessibility issues**
 
-[Case study](docs/portfolio/portfolio-case-study.md) · [Decision log](docs/decisions/15-decision-log.md) ·
-[What's validated](docs/validation/19-validation-plan.md) · [Run it locally](#run-it-locally)
+[Case study](docs/09-portfolio/case-study.md) · [Decision log](docs/05-decisions/decision-log.md) ·
+[What's validated](docs/07-validation/validation-plan.md) · [Run it locally](#run-it-locally)
 
 </div>
 
@@ -22,7 +22,7 @@ survives them leaving.
 
 > **This started as a caregiver booking marketplace. The research rejected that premise,
 > and this repository documents the reversal as carefully as the build.**
-> → [`docs/decisions/15-decision-log.md`](docs/decisions/15-decision-log.md), decision D-01.
+> → [`docs/05-decisions/decision-log.md`](docs/05-decisions/decision-log.md), decision D-01.
 
 ---
 
@@ -37,7 +37,7 @@ case rather than the exception.
 elderly Indians depend on family and 78% have no pension, so the payer is an adult child,
 increasingly in another city. Home healthcare is a USD 6.4bn market with *no dedicated
 national regulatory framework*. <sup>Sources graded A–D in
-[docs/00](docs/research/00-evidence-index.md)</sup>
+[docs/00](docs/02-research/evidence-index.md)</sup>
 
 ## The research insight
 
@@ -50,7 +50,7 @@ after — untrained staff, helpers who *"disappear without notice"*, and care th
 *"effectively resets to Day 1"* when the agency rotates.
 
 *(That is absence of evidence, not evidence of absence. The falsifier is written into
-[docs/01](docs/research/01-problem-discovery.md): if 4 of 10 discharge interviews name finding an
+[docs/01](docs/01-problem/problem-discovery.md): if 4 of 10 discharge interviews name finding an
 attendant as the hardest problem, this reframing is wrong.)*
 
 ## The product
@@ -83,15 +83,17 @@ FAMILY, on discharge day                 ATTENDANT, every shift
 
 ## Screenshots
 
-| Family · today | Attendant · the whole app |
+| Family · today | Attendant · the whole app, bilingual |
 | --- | --- |
-| ![Family dashboard](docs/screenshots/02-family-dashboard.png) | ![Attendant shift](docs/screenshots/07-attendant-shift.png) |
+| ![Family dashboard](docs/10-evidence/screenshots/02-family-dashboard.png) | ![Attendant shift](docs/10-evidence/screenshots/07-attendant-shift.png) |
 
 | The handover pack | Corrections are shown, never hidden |
 | --- | --- |
-| ![Handover pack](docs/screenshots/04-handover-pack.png) | ![Corrections](docs/screenshots/11-corrections.png) |
+| ![Handover pack](docs/10-evidence/screenshots/04-handover-pack.png) | ![Corrections](docs/10-evidence/screenshots/11-corrections.png) |
 
-More in [`docs/screenshots/`](docs/screenshots).
+All **18 screenshots** are generated from the running application by `npm run shots`, which
+fails if any page logs a console error — see
+[`docs/10-evidence/`](docs/10-evidence/README.md).
 
 ## Architecture
 
@@ -113,7 +115,7 @@ role-split UI                  ──►     routes: auth · plans · care · fa
 - A deterministic alert engine — a readable table of thresholds, no model
 - First-party analytics; no free text, names or readings ever recorded as events
 
-Detail: [`docs/engineering/16-technical-architecture.md`](docs/engineering/16-technical-architecture.md).
+Detail: [`docs/08-engineering/architecture.md`](docs/08-engineering/architecture.md).
 
 ## Testing
 
@@ -129,7 +131,7 @@ definition of done has an end-to-end test behind it, including *a family cannot 
 another family's case* and *a replacement attendant sees the previous handover*. The three
 that changed the product: the handover pack silently lost resolved decisions; **care entries
 could be rewritten with no trace**; and the north-star metric was pointed at the wrong risk.
-[`docs/engineering/17-testing.md`](docs/engineering/17-testing.md).
+[`docs/08-engineering/testing.md`](docs/08-engineering/testing.md).
 
 ## Key product decisions
 
@@ -145,7 +147,7 @@ could be rewritten with no trace**; and the north-star metric was pointed at the
 | D-22 ↺ | Downgraded three of my own conclusions | The story reads less punchy |
 | D-23 ↺ | **Split the north star: documented vs complete days** | A low bar that looks unimpressive, and needs guardrails to stay honest |
 
-All 25, with alternatives and evidence: [`docs/decisions/15-decision-log.md`](docs/decisions/15-decision-log.md).
+All 25, with alternatives and evidence: [`docs/05-decisions/decision-log.md`](docs/05-decisions/decision-log.md).
 
 ## How success is measured
 
@@ -159,7 +161,7 @@ one person entered, at a time, under their name, with corrections kept.
 
 The guardrails matter more than either: attendant time over 5 minutes a shift, burst logging
 over 30% of shifts, or a false-alert rate over 20% each stop the roadmap.
-[`docs/metrics/13-metrics.md`](docs/metrics/13-metrics.md).
+[`docs/06-metrics/metrics.md`](docs/06-metrics/metrics.md).
 
 ## Current validation status
 
@@ -167,7 +169,7 @@ over 30% of shifts, or a false-alert rate over 20% each stop the roadmap.
 | --- | --- |
 | ✅ **Validated** | The core flows work; entries cannot be silently rewritten; the interface clears mechanical accessibility checks — *all engineering facts, none of them product validation* |
 | ⏳ **NOT YET VALIDATED** | Attendants will log unsupervised · families will pay unbundled · the handover pack improves continuity · families prefer this to a WhatsApp group |
-| 📋 **Ready to run** | Interview guides, pre-registered thresholds, a [pilot runbook](docs/validation/pilot-runbook.md), [participant materials](docs/validation/participant-materials.md) in English and Hindi, consent scripts and an [evidence table](docs/validation/evidence-table.md) — all written, none used |
+| 📋 **Ready to run** | Interview guides, pre-registered thresholds, a [pilot runbook](docs/07-validation/pilot-runbook.md), [participant materials](docs/07-validation/participant-materials.md) in English and Hindi, consent scripts and an [evidence table](docs/07-validation/evidence-table.md) — all written, none used |
 
 ## Limitations
 
@@ -202,12 +204,47 @@ npm run seed        # a fictional 9-day episode with an attendant replacement
 npm run dev         # API on :4000, web on http://localhost:5173
 ```
 
+**Every command:**
+
+| | |
+| --- | --- |
+| `npm install` | Install dependencies |
+| `npm run seed` | Create the demo episode |
+| `npm run reset-demo` | Wipe and rebuild the demo episode |
+| `npm run dev` | Dev servers — API on :4000, web on :5173 |
+| `npm run build` | Client bundle + server type check |
+| `npm start` | Production — one process on :4000 |
+| `npm test` | 70 unit and integration tests |
+| `npm run test:e2e` | 72 end-to-end journeys (needs `CHROMIUM_PATH` if Chromium is preinstalled) |
+| `npm run audit:a11y` | Accessibility sweep against the running app |
+| `npm run audit:consistency` | Documentation consistency audit |
+| `npm run shots` | Regenerate all 18 screenshots from the running app |
+| **`npm run verify`** | **All of the above checks, in order** |
+
 Open **http://localhost:5173** and use the demo buttons on the sign-in screen, or:
 
 | Role | Mobile | Password | What you see |
 | --- | --- | --- | --- |
 | Family (Ananya, daughter in Bengaluru) | `9810012345` | `demo1234` | Day 9 of 30, an open alert, the week strip, the handover pack, a correction on day 7 |
 | Attendant (Reena, currently on duty) | `9810055555` | `demo1234` | The shift screen, mid-shift |
+
+**The demo journey, end to end** — reproducible in about five minutes:
+
+```
+Family signs in → creates a care case → picks a recovery type → adds medicines
+        ↓
+Invites an attendant → gets a 6-character code
+        ↓
+Attendant joins with the code → starts a shift
+        ↓
+Records a dose given · records a task as "Could not" + reason · reports a problem
+        ↓
+Ends shift → leaves a handover note
+        ↓
+Family sees the day's record, the alert, and closes it with a note
+        ↓
+Documented care days moves · a correction appears in the revision history
+```
 
 ```bash
 npm test                                            # 65 unit + integration tests
@@ -227,27 +264,27 @@ Full index: **[`docs/README.md`](docs/README.md)** — grouped into `research/`,
 
 | | |
 | --- | --- |
-| **[Portfolio case study](docs/portfolio/portfolio-case-study.md)** | **The full narrative, start to finish** |
-| [00 · Evidence index](docs/research/00-evidence-index.md) | Every source graded A–D, plus a claim register of the 13 load-bearing conclusions |
-| [01 · Problem discovery](docs/research/01-problem-discovery.md) | How the brief was rejected, and the falsifier |
-| [02 · Market research](docs/research/02-market-research.md) | Sizing, payers, and why the headline number misleads |
-| [03 · User research](docs/research/03-user-research.md) | Demand and supply side; what I could not learn |
-| [04 · Competitive analysis](docs/research/04-competitive-analysis.md) | Three layers, why each incumbent wins, positioning |
-| [05 · Personas](docs/product/05-personas.md) · [06 · JTBD](docs/product/06-jtbd.md) | Ananya, Reena, and the jobs deliberately unserved |
-| [07 · Opportunity analysis](docs/research/07-opportunity-analysis.md) | Segment scoring, H1–H6 tested, 5 opportunities ranked |
-| [08 · Product strategy](docs/product/08-product-strategy.md) | Positioning, principles, non-goals, five candidate payers |
-| [09 · PRD](docs/product/09-prd.md) | The removal test, requirements, acceptance criteria |
-| [10 · User flows](docs/product/10-user-flows.md) · [11 · IA](docs/product/11-information-architecture.md) | Journeys with edge and failure states |
-| [12 · Design decisions](docs/product/12-design-decisions.md) | Palette, bilingual UI, accessibility |
-| [13 · Metrics](docs/metrics/13-metrics.md) | North star, guardrails, and why "verified" became "documented" |
-| [14 · Experiment plan](docs/validation/14-experiment-plan.md) | Sequencing: six weeks, no engineering |
-| [15 · Decision log](docs/decisions/15-decision-log.md) | 22 decisions, 11 reversals |
-| [16 · Technical architecture](docs/engineering/16-technical-architecture.md) | Stack, API, security, DPDP posture |
-| [17 · Testing](docs/engineering/17-testing.md) | Coverage, 17 defects, the accessibility sweep |
-| [18 · Learnings](docs/portfolio/18-learnings.md) | Plus 15 skeptical-interviewer questions, answered |
-| [19 · Validation plan](docs/validation/19-validation-plan.md) | Interview guides, observation protocol, consent, experiment tracker |
-| [Portfolio review](docs/portfolio/portfolio-review.md) | Scored 1–10 as a hiring manager would |
-| [LinkedIn post](docs/portfolio/linkedin-post.md) · [carousel](docs/portfolio/linkedin-carousel.md) | Ready to publish |
+| **[Portfolio case study](docs/09-portfolio/case-study.md)** | **The full narrative, start to finish** |
+| [00 · Evidence index](docs/02-research/evidence-index.md) | Every source graded A–D, plus a claim register of the 13 load-bearing conclusions |
+| [01 · Problem discovery](docs/01-problem/problem-discovery.md) | How the brief was rejected, and the falsifier |
+| [02 · Market research](docs/02-research/market-research.md) | Sizing, payers, and why the headline number misleads |
+| [03 · User research](docs/02-research/user-research.md) | Demand and supply side; what I could not learn |
+| [04 · Competitive analysis](docs/02-research/competitive-analysis.md) | Three layers, why each incumbent wins, positioning |
+| [05 · Personas](docs/03-strategy/personas.md) · [06 · JTBD](docs/03-strategy/jobs-to-be-done.md) | Ananya, Reena, and the jobs deliberately unserved |
+| [07 · Opportunity analysis](docs/03-strategy/opportunity-analysis.md) | Segment scoring, H1–H6 tested, 5 opportunities ranked |
+| [08 · Product strategy](docs/03-strategy/product-strategy.md) | Positioning, principles, non-goals, five candidate payers |
+| [09 · PRD](docs/04-product/prd.md) | The removal test, requirements, acceptance criteria |
+| [10 · User flows](docs/04-product/user-flows.md) · [11 · IA](docs/04-product/information-architecture.md) | Journeys with edge and failure states |
+| [12 · Design decisions](docs/04-product/design-decisions.md) | Palette, bilingual UI, accessibility |
+| [13 · Metrics](docs/06-metrics/metrics.md) | North star, guardrails, and why "verified" became "documented" |
+| [14 · Experiment plan](docs/07-validation/experiment-plan.md) | Sequencing: six weeks, no engineering |
+| [15 · Decision log](docs/05-decisions/decision-log.md) | 22 decisions, 11 reversals |
+| [16 · Technical architecture](docs/08-engineering/architecture.md) | Stack, API, security, DPDP posture |
+| [17 · Testing](docs/08-engineering/testing.md) | Coverage, 17 defects, the accessibility sweep |
+| [18 · Learnings](docs/09-portfolio/learnings.md) | Plus 15 skeptical-interviewer questions, answered |
+| [19 · Validation plan](docs/07-validation/validation-plan.md) | Interview guides, observation protocol, consent, experiment tracker |
+| [Portfolio review](docs/09-portfolio/portfolio-review.md) | Scored 1–10 as a hiring manager would |
+| [LinkedIn post](docs/09-portfolio/linkedin-post.md) · [carousel](docs/09-portfolio/linkedin-carousel.md) | Ready to publish |
 
 ---
 
