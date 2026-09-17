@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { AppShell } from '../components/AppShell';
-import { Card, ErrorState, Loading, SectionTitle, Sparkline } from '../components/ui';
+import { Card, ErrorState, Loading, SectionTitle } from '../components/ui';
 import { useApi } from '../lib/useApi';
 import { timeAgo } from '../lib/format';
 import { planNav } from './FamilyDashboard';
@@ -97,10 +97,6 @@ export default function InsightsPage() {
           <Stat label="Documented care days" value={`${data.documented_care_days} of ${data.days_elapsed}`} sub={`${pct(data.documented_rate)} of days have a record`} />
           <Stat label="Complete days" value={`${data.complete_care_days} of ${data.days_elapsed}`} sub="nothing important missed" />
           <Stat label="Items recorded" value={pct(data.logging_completeness)} sub="recorded ÷ expected" />
-        </div>
-        <div className="mt-4 text-leaf-500">
-          <Sparkline points={data.trend.map((t) => (t.expected ? t.logged / t.expected : 0))} />
-          <p className="mt-1 text-xs text-ink-soft">Share of expected items recorded, by day</p>
         </div>
       </Card>
 
