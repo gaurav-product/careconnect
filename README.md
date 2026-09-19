@@ -196,7 +196,7 @@ over 30% of shifts, or a false-alert rate over 20% each stop the roadmap.
 
 ## Run it locally
 
-**Requires Node 20+.**
+**Requires Node 22+.** (better-sqlite3 13 requires it.)
 
 ```bash
 npm install
